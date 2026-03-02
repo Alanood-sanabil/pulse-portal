@@ -134,7 +134,6 @@ const ACCENT_COLORS_BY_TAB = {
 
 export default function VentureContext() {
   const [activeTab, setActiveTab] = useState('market-overview')
-  const [roleView, setRoleView] = useState('ceo')
 
   const getTabContent = () => {
     if (ventureContextData[activeTab]) {
@@ -146,49 +145,11 @@ export default function VentureContext() {
   const tabContent = getTabContent()
   const accentColor = ACCENT_COLORS_BY_TAB[activeTab] || 'border-amber'
 
-  const getCeoCtoBadge = () => {
-    if (activeTab === 'product-decisions' || activeTab === 'tech-stack') {
-      return roleView === 'cto' ? 'CTO/CPO View' : null
-    }
-    if (activeTab === 'financial-history') {
-      return roleView === 'ceo' ? 'CEO View' : null
-    }
-    return null
-  }
-
-  const roleBadge = getCeoCtoBadge()
-
   return (
     <Layout title="Venture Context" subtitle="Tradepay · Strategic context and decisions">
       <div className="p-6 space-y-6">
-        {/* Header Row: Role Toggle */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <p className="text-xs text-text-muted">Strategic knowledge base for Tradepay founders and SSU team</p>
-          </div>
-          <div className="flex gap-1 bg-bg-surface border border-border rounded-xl p-1">
-            <button
-              onClick={() => setRoleView('ceo')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                roleView === 'ceo'
-                  ? 'bg-amber text-bg-base shadow-sm'
-                  : 'text-text-muted hover:text-text'
-              }`}
-            >
-              CEO View
-            </button>
-            <button
-              onClick={() => setRoleView('cto')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                roleView === 'cto'
-                  ? 'bg-amber text-bg-base shadow-sm'
-                  : 'text-text-muted hover:text-text'
-              }`}
-            >
-              CTO/CPO View
-            </button>
-          </div>
-        </div>
+        {/* Header */}
+        <p className="text-xs text-text-muted">Strategic knowledge base for Tradepay founders and SSU team</p>
 
         {/* Section Tab Bar */}
         <div className="border-b border-border">
@@ -209,14 +170,6 @@ export default function VentureContext() {
           </div>
         </div>
 
-        {/* Role View Notice */}
-        {roleBadge && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-amber/10 border border-amber/20 rounded-xl w-fit">
-            <span className="text-xs font-medium text-amber">Viewing as: {roleBadge}</span>
-            <span className="text-xs text-amber/70">— content filtered for your role</span>
-          </div>
-        )}
-
         {/* Tab Content */}
         {tabContent ? (
           <div className="space-y-4">
@@ -225,25 +178,14 @@ export default function VentureContext() {
               <span className="text-xs text-text-muted">{tabContent.blocks.length} entries</span>
             </div>
 
-            {/* CEO view: show all blocks; CTO view on tech/product: reorder or highlight */}
             <div className="space-y-4">
-              {tabContent.blocks
-                .filter((block) => {
-                  if (roleView === 'cto' && (activeTab === 'market-overview' || activeTab === 'key-decisions')) {
-                    return block.tag !== 'Market Size'
-                  }
-                  if (roleView === 'ceo' && activeTab === 'tech-stack') {
-                    return block.tag !== 'Architecture' || true
-                  }
-                  return true
-                })
-                .map((block) => (
-                  <ContentBlock
-                    key={block.id}
-                    block={block}
-                    accentColor={accentColor}
-                  />
-                ))}
+              {tabContent.blocks.map((block) => (
+                <ContentBlock
+                  key={block.id}
+                  block={block}
+                  accentColor={accentColor}
+                />
+              ))}
             </div>
           </div>
         ) : (

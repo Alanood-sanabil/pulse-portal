@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ExternalLink, Download, Eye, Gift } from 'lucide-react'
+import { ExternalLink, Download, Eye, Gift, Search } from 'lucide-react'
 import Layout from '../components/Layout'
 import SidePanel from '../components/SidePanel'
 import Modal from '../components/Modal'
@@ -139,18 +139,66 @@ function StudioServicesTab() {
   )
 }
 
+const TEMPLATE_CATEGORIES = ['All', 'Legal', 'Finance', 'Fundraising', 'Product', 'HR']
+
 function TemplatesTab() {
   const { addToast } = useApp()
   const [previewTemplate, setPreviewTemplate] = useState(null)
+  const [search, setSearch] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
 
   const handleDownload = (template) => {
     addToast(`Download started: ${template.name}`, 'success')
   }
 
+  const filtered = templates.filter((t) => {
+    const matchesCategory = activeCategory === 'All' || t.category === activeCategory
+    const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
+      t.description.toLowerCase().includes(search.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
+
   return (
     <>
+      {/* Search bar */}
+      <div className="relative">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
+        <input
+          type="text"
+          placeholder="Search templates…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-border bg-white text-sm text-text placeholder:text-text-dim focus:outline-none focus:border-amber/60 focus:ring-2 focus:ring-amber/10 transition-all"
+        />
+      </div>
+
+      {/* Category filters */}
+      <div className="flex flex-wrap gap-2">
+        {TEMPLATE_CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all border ${
+              activeCategory === cat
+                ? 'bg-amber text-white border-amber shadow-sm'
+                : 'bg-white border-border text-text-muted hover:text-text hover:border-border'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center space-y-1">
+            <p className="text-sm text-text-muted">No templates match your search.</p>
+            <p className="text-xs text-text-dim">Try a different keyword or category.</p>
+          </div>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {templates.map((template) => (
+        {filtered.map((template) => (
           <div key={template.id} className="bg-bg-card border border-border rounded-xl p-5 flex flex-col gap-3">
             <div className="flex items-start justify-between gap-2">
               <FileTypeBadge type={template.type} />
@@ -180,6 +228,7 @@ function TemplatesTab() {
           </div>
         ))}
       </div>
+      )}
 
       <Modal
         isOpen={!!previewTemplate}
