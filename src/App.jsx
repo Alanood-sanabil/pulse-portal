@@ -14,6 +14,7 @@ import Milestones from './pages/Milestones'
 import DocumentLibrary from './pages/DocumentLibrary'
 import Notifications from './pages/Notifications'
 import StudioBoard from './pages/StudioBoard'
+import FounderJourney from './pages/FounderJourney'
 
 function PortalRoutes() {
   return (
@@ -30,6 +31,7 @@ function PortalRoutes() {
       <Route path="/document-library" element={<DocumentLibrary />} />
       <Route path="/notifications" element={<Notifications />} />
       <Route path="/studio-board" element={<StudioBoard />} />
+      <Route path="/founder-journey" element={<FounderJourney />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

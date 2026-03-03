@@ -284,6 +284,42 @@ export const tasks = [
   },
 ]
 
+export const journeyEntries = [
+  {
+    id: 'je-3',
+    weekLabel: 'Week of Feb 10 – Feb 16, 2026',
+    weekStart: '2026-02-10',
+    focus: 'Trying to get the corporate bank account open — it has been the main blocker this week. Everything else is dependent on having the account active before we can move on payroll and vendor payments.',
+    achievements: 'Got the company stamp from the notary and submitted the initial KYB package to SNB. Also completed the board resolution document that was missing from the first submission.',
+    blockers: 'SNB rejected our KYB application citing a missing certified translation of the shareholder agreement. We have been going back and forth since Tuesday. The clock is ticking on payroll setup.',
+    numbers: 'No revenue yet. Burn is coming out of founder personal funds for now. Team: just me and one part-time contractor.',
+    milestone: 'Nothing major this week — it felt like a week of obstacles more than wins. But getting the KYB package in was still progress even if it got bounced back.',
+    savedAt: 'Feb 16, 2026',
+  },
+  {
+    id: 'je-2',
+    weekLabel: 'Week of Feb 17 – Feb 23, 2026',
+    weekStart: '2026-02-17',
+    focus: 'Getting the legal foundation properly in place — specifically the commercial registration approval from MISA and locking in the shareholder agreement signatures with the co-founder.',
+    achievements: 'MISA approved the commercial registration. CR certificate received on Feb 18. This was a huge unlock — we can now open bank accounts, sign contracts, and officially operate. Also got both co-founder signatures on the SHA.',
+    blockers: 'Ministry portal was down for most of Tuesday which delayed the CR certificate download by two days. Minor but frustrating.',
+    numbers: 'Still pre-revenue. Formation costs so far around SAR 18,000 including notary, translations, and MISA fees.',
+    milestone: 'Getting the CR was the biggest moment so far. Tradepay is now a real, registered company. I took a screenshot of the certificate and it still feels surreal.',
+    savedAt: 'Feb 23, 2026',
+  },
+  {
+    id: 'je-1',
+    weekLabel: 'Week of Feb 24 – Mar 2, 2026',
+    weekStart: '2026-02-24',
+    focus: 'Wrapping up the IP assignment agreement and holding the first formal team meeting with the full early crew — me, the contractor, and a new part-time product advisor who came on board this week.',
+    achievements: 'IP assignment agreement signed and submitted to the legal vault. First team meeting went well — set a clear 60-day focus: get the MVP payment flow working and land 2 pilot customers. Also finalized the product advisor terms.',
+    blockers: 'Trying to onboard the product advisor into Qoyod for expense tracking but the SSU finance setup is not fully done yet. Small delay.',
+    numbers: 'MRR: SAR 0 still. Burn: ~SAR 22,000 this month. Team now at 3 (me + contractor + advisor). Pipeline: 2 warm conversations going.',
+    milestone: 'First real team meeting. Felt like the venture actually started for real this week. The IP transfer also means everything I built before Tradepay was registered now officially belongs to the company.',
+    savedAt: 'Mar 2, 2026',
+  },
+]
+
 export const tasksByCategory = {
   Legal: tasks.filter(t => t.category === 'Legal'),
   Finance: tasks.filter(t => t.category === 'Finance'),

@@ -19,6 +19,7 @@ import {
   Zap,
   Building2,
   Users,
+  PenLine,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import TaskDetailPanel from '../components/TaskDetailPanel'
@@ -63,7 +64,7 @@ const MOODS_MAP = {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones, subTaskStatuses } = useApp()
+  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones, subTaskStatuses, journeyWeekSubmitted } = useApp()
 
   const [selectedTask, setSelectedTask] = useState(null)
   const [showBooking, setShowBooking] = useState(false)
@@ -164,6 +165,26 @@ export default function Home() {
               className="btn-primary shrink-0 flex items-center gap-2 text-xs"
             >
               Submit Pulse
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        )}
+
+        {/* ── Founder Journey Banner ── */}
+        {!journeyWeekSubmitted && (
+          <div className="flex items-center justify-between gap-4 bg-bg-surface border border-border rounded-xl px-5 py-4">
+            <div className="flex items-center gap-3">
+              <PenLine size={17} className="text-text-muted shrink-0" />
+              <p className="text-sm text-text-muted">
+                This week's Journey entry is waiting.{' '}
+                <span className="text-text-dim">Capture what you built, learned, and experienced.</span>
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/founder-journey')}
+              className="btn-secondary shrink-0 flex items-center gap-2 text-xs"
+            >
+              Add your entry
               <ArrowRight size={13} />
             </button>
           </div>

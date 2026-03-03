@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useCallback } from 'react'
+import { journeyEntries as initialJourneyEntries } from '../data/mockData'
 
 const AppContext = createContext(null)
 
@@ -31,6 +32,8 @@ const initialSubTaskStatuses = {
 const initialState = {
   taskStatuses: initialTaskStatuses,
   subTaskStatuses: initialSubTaskStatuses,
+  journeyEntries: initialJourneyEntries,
+  journeyWeekSubmitted: false,
   notificationCount: 5,
   notificationsRead: false,
   weeklyUpdateSubmitted: false,
@@ -226,6 +229,12 @@ function reducer(state, action) {
       }
     case 'ADD_MILESTONE':
       return { ...state, milestones: [...state.milestones, action.milestone] }
+    case 'ADD_JOURNEY_ENTRY':
+      return {
+        ...state,
+        journeyEntries: [action.entry, ...state.journeyEntries],
+        journeyWeekSubmitted: true,
+      }
     case 'MARK_SECTION_READ':
       const newRead = new Set(state.readSections)
       newRead.add(action.sectionId)
@@ -269,6 +278,7 @@ export function AppProvider({ children }) {
   const addWeeklyUpdate = useCallback((update) => dispatch({ type: 'ADD_WEEKLY_UPDATE', update }), [])
   const updateMilestone = useCallback((id, data) => dispatch({ type: 'UPDATE_MILESTONE', id, data }), [])
   const addMilestone = useCallback((milestone) => dispatch({ type: 'ADD_MILESTONE', milestone }), [])
+  const addJourneyEntry = useCallback((entry) => dispatch({ type: 'ADD_JOURNEY_ENTRY', entry }), [])
   const markSectionRead = useCallback((sectionId, chapterId, chapterSections) => dispatch({ type: 'MARK_SECTION_READ', sectionId, chapterId, chapterSections }), [])
   const addDocument = useCallback((category, doc) => dispatch({ type: 'ADD_DOCUMENT', category, doc }), [])
   const submitPulseCheck = useCallback((data) => dispatch({ type: 'SUBMIT_PULSE_CHECK', data }), [])
@@ -288,6 +298,7 @@ export function AppProvider({ children }) {
       addWeeklyUpdate,
       updateMilestone,
       addMilestone,
+      addJourneyEntry,
       markSectionRead,
       addDocument,
       submitPulseCheck,
