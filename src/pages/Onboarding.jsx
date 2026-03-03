@@ -10,6 +10,8 @@ import {
   User,
   TrendingUp,
   Info,
+  Building2,
+  Users,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import TaskDetailPanel from '../components/TaskDetailPanel'
@@ -37,25 +39,36 @@ const STATUS_LABEL = {
 }
 
 function TaskStatusIcon({ status }) {
-  if (status === 'done') {
-    return <CheckCircle size={17} className="text-pulse-green shrink-0" />
-  }
-  if (status === 'in-progress') {
-    return <Clock size={17} className="text-pulse-blue shrink-0" />
-  }
-  if (status === 'overdue') {
-    return <AlertCircle size={17} className="text-pulse-red shrink-0" />
-  }
+  if (status === 'done') return <CheckCircle size={17} className="text-pulse-green shrink-0" />
+  if (status === 'in-progress') return <Clock size={17} className="text-pulse-blue shrink-0" />
+  if (status === 'overdue') return <AlertCircle size={17} className="text-pulse-red shrink-0" />
   return <Circle size={17} className="text-text-dim shrink-0" />
 }
 
 function TaskRow({ task, onOpen }) {
-  const { taskStatuses } = useApp()
+  const { taskStatuses, subTaskStatuses } = useApp()
+  const ownerType = task.ownerType || 'founder'
   const status = taskStatuses[task.id] || 'not-started'
   const isDone = status === 'done'
   const isOverdue = status === 'overdue'
   const isInProgress = status === 'in-progress'
-  const statusInfo = STATUS_LABEL[status] || STATUS_LABEL['not-started']
+
+  // Shared task progress
+  const sharedDone = ownerType === 'shared' && task.subTasks
+    ? task.subTasks.filter(st => subTaskStatuses[st.id]).length
+    : 0
+  const sharedTotal = ownerType === 'shared' && task.subTasks ? task.subTasks.length : 0
+  const sharedPct = sharedTotal > 0 ? Math.round((sharedDone / sharedTotal) * 100) : 0
+
+  // Studio display status
+  const studioStatusLabel =
+    status === 'done' ? 'Done' :
+    status === 'in-progress' ? 'In Progress' :
+    status === 'waiting-ssu' ? 'Waiting' : 'Not Started'
+  const studioStatusColor =
+    status === 'done' ? 'text-pulse-green' :
+    status === 'in-progress' ? 'text-pulse-blue' :
+    status === 'waiting-ssu' ? 'text-amber' : 'text-text-dim'
 
   return (
     <button
@@ -68,39 +81,77 @@ function TaskRow({ task, onOpen }) {
         }
       `}
     >
-      <TaskStatusIcon status={status} />
+      {/* Left icon */}
+      {ownerType === 'founder' && <TaskStatusIcon status={status} />}
+      {ownerType === 'studio' && (
+        <div className={`w-[17px] h-[17px] flex items-center justify-center shrink-0 ${isDone ? 'text-pulse-green' : 'text-pulse-blue'}`}>
+          <Building2 size={15} />
+        </div>
+      )}
+      {ownerType === 'shared' && (
+        <div className="w-[17px] h-[17px] flex items-center justify-center shrink-0 text-amber">
+          <Users size={15} />
+        </div>
+      )}
 
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-text-dim' : isOverdue ? 'text-pulse-red' : 'text-text'}`}>
           {task.title}
         </p>
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
-            <Tag size={9} className="mr-1" />
-            {task.category}
-          </span>
-          <span className="badge bg-bg-elevated text-text-dim">
-            <User size={9} className="mr-1" />
-            {task.owner}
-          </span>
-          {isOverdue ? (
-            <span className="badge bg-pulse-red/10 text-pulse-red">
-              <AlertCircle size={9} className="mr-1" />
-              {task.overdueDays}d overdue
+
+        {/* Shared: mini progress bar */}
+        {ownerType === 'shared' && (
+          <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex-1 max-w-[120px] bg-bg-elevated rounded-full h-1.5">
+              <div
+                className={`h-1.5 rounded-full transition-all ${sharedPct === 100 ? 'bg-pulse-green' : 'bg-amber'}`}
+                style={{ width: `${sharedPct}%` }}
+              />
+            </div>
+            <span className="text-xs text-text-dim">{sharedDone}/{sharedTotal} steps</span>
+            <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
+              <Tag size={9} className="mr-1" />{task.category}
             </span>
-          ) : (
-            <span className="text-xs text-text-dim flex items-center gap-1">
-              <Clock size={10} />
-              Due {task.dueDate}
+          </div>
+        )}
+
+        {/* Studio: status badge */}
+        {ownerType === 'studio' && (
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
+              <Tag size={9} className="mr-1" />{task.category}
             </span>
-          )}
-          {isInProgress && (
-            <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>
-          )}
-          {isDone && (
-            <span className="badge bg-pulse-green/10 text-pulse-green">Done</span>
-          )}
-        </div>
+            <span className={`text-xs font-medium ${studioStatusColor}`}>{studioStatusLabel}</span>
+            {task.assignedTo && (
+              <span className="text-xs text-text-dim">· {task.assignedTo.name}</span>
+            )}
+            {isOverdue && (
+              <span className="badge bg-pulse-red/10 text-pulse-red">
+                <AlertCircle size={9} className="mr-1" />{task.overdueDays}d overdue
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Founder: original badges */}
+        {ownerType === 'founder' && (
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
+              <Tag size={9} className="mr-1" />{task.category}
+            </span>
+            {isOverdue ? (
+              <span className="badge bg-pulse-red/10 text-pulse-red">
+                <AlertCircle size={9} className="mr-1" />{task.overdueDays}d overdue
+              </span>
+            ) : (
+              <span className="text-xs text-text-dim flex items-center gap-1">
+                <Clock size={10} />Due {task.dueDate}
+              </span>
+            )}
+            {isInProgress && <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>}
+            {isDone && <span className="badge bg-pulse-green/10 text-pulse-green">Done</span>}
+          </div>
+        )}
       </div>
 
       <ChevronRight size={14} className="text-text-dim opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -217,6 +268,40 @@ export default function Onboarding() {
                     {remainingCount} task{remainingCount !== 1 ? 's' : ''} remaining
                   </span>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Task Type Legend ── */}
+        <div className="bg-bg-surface border border-border-subtle rounded-xl p-4">
+          <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Task Ownership Types</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="flex items-start gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-bg-elevated flex items-center justify-center shrink-0 mt-0.5">
+                <User size={13} className="text-text-muted" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-text">Founder Owned</p>
+                <p className="text-xs text-text-dim leading-relaxed mt-0.5">You complete this yourself. Mark it done when finished.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-pulse-blue/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Building2 size={13} className="text-pulse-blue" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-text">Studio Owned</p>
+                <p className="text-xs text-text-dim leading-relaxed mt-0.5">Handled by the SSU team. Track status and follow up if needed.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-amber/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Users size={13} className="text-amber" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-text">Shared</p>
+                <p className="text-xs text-text-dim leading-relaxed mt-0.5">Steps split between you and the Studio. Check your own steps.</p>
               </div>
             </div>
           </div>

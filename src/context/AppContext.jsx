@@ -16,8 +16,21 @@ const initialTaskStatuses = {
   'task-11': 'not-started',
 }
 
+// Initial subtask completion state for shared tasks
+const initialSubTaskStatuses = {
+  // task-2 (Sign Shareholder Agreement) — all done since task is done
+  'sub-2-1': true,
+  'sub-2-2': true,
+  'sub-2-3': true,
+  // task-7 (IP assignment) — not started
+  'sub-7-1': false,
+  'sub-7-2': false,
+  'sub-7-3': false,
+}
+
 const initialState = {
   taskStatuses: initialTaskStatuses,
+  subTaskStatuses: initialSubTaskStatuses,
   notificationCount: 5,
   notificationsRead: false,
   weeklyUpdateSubmitted: false,
@@ -177,6 +190,17 @@ function reducer(state, action) {
         ...state,
         taskStatuses: { ...state.taskStatuses, [action.taskId]: action.status },
       }
+    case 'TOGGLE_SUBTASK': {
+      const newSubTaskStatuses = { ...state.subTaskStatuses, [action.subTaskId]: action.done }
+      // Check if all subtasks for the parent task are now done
+      const allDone = action.siblingIds.every(id => (id === action.subTaskId ? action.done : newSubTaskStatuses[id]))
+      const newTaskStatus = allDone ? 'done' : (action.done ? 'in-progress' : 'in-progress')
+      return {
+        ...state,
+        subTaskStatuses: newSubTaskStatuses,
+        taskStatuses: { ...state.taskStatuses, [action.taskId]: newTaskStatus },
+      }
+    }
     case 'MARK_ALL_NOTIFICATIONS_READ':
       return { ...state, notificationsRead: true, notificationCount: 0 }
     case 'SET_WEEKLY_UPDATE_SUBMITTED':
@@ -230,6 +254,7 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const updateTaskStatus = useCallback((taskId, status) => dispatch({ type: 'UPDATE_TASK_STATUS', taskId, status }), [])
+  const toggleSubTask = useCallback((subTaskId, done, taskId, siblingIds) => dispatch({ type: 'TOGGLE_SUBTASK', subTaskId, done, taskId, siblingIds }), [])
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
   const setWeeklyUpdateSubmitted = useCallback(() => dispatch({ type: 'SET_WEEKLY_UPDATE_SUBMITTED' }), [])
   const addToast = useCallback((message, toastType = 'default') => {
@@ -252,6 +277,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       ...state,
       updateTaskStatus,
+    toggleSubTask,
       markAllNotificationsRead,
       setWeeklyUpdateSubmitted,
       addToast,

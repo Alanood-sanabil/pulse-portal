@@ -17,6 +17,8 @@ import {
   Circle,
   ArrowRight,
   Zap,
+  Building2,
+  Users,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import TaskDetailPanel from '../components/TaskDetailPanel'
@@ -61,7 +63,7 @@ const MOODS_MAP = {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones } = useApp()
+  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones, subTaskStatuses } = useApp()
 
   const [selectedTask, setSelectedTask] = useState(null)
   const [showBooking, setShowBooking] = useState(false)
@@ -407,6 +409,15 @@ export default function Home() {
                     const isDone = status === 'done'
                     const isOverdue = status === 'overdue'
                     const isInProgress = status === 'in-progress'
+                    const ownerType = task.ownerType || 'founder'
+
+                    const sharedDone = ownerType === 'shared' && task.subTasks
+                      ? task.subTasks.filter(st => subTaskStatuses[st.id]).length : 0
+                    const sharedTotal = ownerType === 'shared' && task.subTasks ? task.subTasks.length : 0
+                    const sharedPct = sharedTotal > 0 ? Math.round((sharedDone / sharedTotal) * 100) : 0
+
+                    const studioStatusLabel = status === 'done' ? 'Done' : status === 'in-progress' ? 'In Progress' : status === 'waiting-ssu' ? 'Waiting' : 'Not Started'
+                    const studioStatusColor = status === 'done' ? 'text-pulse-green' : status === 'in-progress' ? 'text-pulse-blue' : status === 'waiting-ssu' ? 'text-amber' : 'text-text-dim'
 
                     return (
                       <button
@@ -420,30 +431,55 @@ export default function Home() {
                           }
                         `}
                       >
-                        <StatusIcon status={status} size={15} />
+                        {ownerType === 'founder' && <StatusIcon status={status} size={15} />}
+                        {ownerType === 'studio' && (
+                          <Building2 size={15} className={`shrink-0 ${isDone ? 'text-pulse-green' : 'text-pulse-blue'}`} />
+                        )}
+                        {ownerType === 'shared' && (
+                          <Users size={15} className="shrink-0 text-amber" />
+                        )}
 
                         <div className="flex-1 min-w-0">
                           <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-text-dim' : isOverdue ? 'text-pulse-red' : 'text-text'}`}>
                             {task.title}
                           </p>
-                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
-                              {task.category}
-                            </span>
-                            {isOverdue ? (
-                              <span className="badge bg-pulse-red/10 text-pulse-red">
-                                {task.overdueDays}d overdue
+
+                          {ownerType === 'shared' && (
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="flex-1 max-w-[100px] bg-bg-elevated rounded-full h-1.5">
+                                <div className={`h-1.5 rounded-full ${sharedPct === 100 ? 'bg-pulse-green' : 'bg-amber'}`} style={{ width: `${sharedPct}%` }} />
+                              </div>
+                              <span className="text-xs text-text-dim">{sharedDone}/{sharedTotal} steps</span>
+                            </div>
+                          )}
+
+                          {ownerType === 'studio' && (
+                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                              <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>{task.category}</span>
+                              <span className={`text-xs font-medium ${studioStatusColor}`}>{studioStatusLabel}</span>
+                            </div>
+                          )}
+
+                          {ownerType === 'founder' && (
+                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                              <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
+                                {task.category}
                               </span>
-                            ) : (
-                              <span className="text-xs text-text-dim flex items-center gap-1">
-                                <Clock size={10} />
-                                {task.dueDate}
-                              </span>
-                            )}
-                            {isInProgress && (
-                              <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>
-                            )}
-                          </div>
+                              {isOverdue ? (
+                                <span className="badge bg-pulse-red/10 text-pulse-red">
+                                  {task.overdueDays}d overdue
+                                </span>
+                              ) : (
+                                <span className="text-xs text-text-dim flex items-center gap-1">
+                                  <Clock size={10} />
+                                  {task.dueDate}
+                                </span>
+                              )}
+                              {isInProgress && (
+                                <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         <ChevronRight size={14} className="text-text-dim opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
