@@ -24,7 +24,7 @@ export default function BookingModal({ isOpen, onClose, personName, personRole }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={`Book a meeting with ${personName}`} maxWidth="max-w-xl">
+    <Modal isOpen={isOpen} onClose={handleClose} title={`Office Hours with ${personName}`} maxWidth="max-w-xl">
       <div className="p-6">
         {!confirmed ? (
           <>

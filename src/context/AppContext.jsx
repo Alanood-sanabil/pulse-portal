@@ -21,6 +21,7 @@ const initialState = {
   notificationCount: 5,
   notificationsRead: false,
   weeklyUpdateSubmitted: false,
+  pulseCheck: null,
   toasts: [],
   selectedCategory: null,
   selectedChannel: 'tradepay-general',
@@ -180,6 +181,8 @@ function reducer(state, action) {
       return { ...state, notificationsRead: true, notificationCount: 0 }
     case 'SET_WEEKLY_UPDATE_SUBMITTED':
       return { ...state, weeklyUpdateSubmitted: true }
+    case 'SUBMIT_PULSE_CHECK':
+      return { ...state, pulseCheck: action.data, weeklyUpdateSubmitted: true }
     case 'ADD_TOAST':
       return { ...state, toasts: [...state.toasts, { id: Date.now(), message: action.message, type: action.toastType || 'default' }] }
     case 'REMOVE_TOAST':
@@ -243,6 +246,7 @@ export function AppProvider({ children }) {
   const addMilestone = useCallback((milestone) => dispatch({ type: 'ADD_MILESTONE', milestone }), [])
   const markSectionRead = useCallback((sectionId, chapterId, chapterSections) => dispatch({ type: 'MARK_SECTION_READ', sectionId, chapterId, chapterSections }), [])
   const addDocument = useCallback((category, doc) => dispatch({ type: 'ADD_DOCUMENT', category, doc }), [])
+  const submitPulseCheck = useCallback((data) => dispatch({ type: 'SUBMIT_PULSE_CHECK', data }), [])
 
   return (
     <AppContext.Provider value={{
@@ -260,6 +264,7 @@ export function AppProvider({ children }) {
       addMilestone,
       markSectionRead,
       addDocument,
+      submitPulseCheck,
     }}>
       {children}
     </AppContext.Provider>

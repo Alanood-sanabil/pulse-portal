@@ -293,6 +293,7 @@ function PartnerPerksTab() {
                     {perk.category}
                   </span>
                 </div>
+                <p className="text-sm font-bold text-amber">{perk.perkValue}</p>
                 <p className="text-xs text-text-muted leading-relaxed">{perk.description}</p>
               </div>
             </div>
@@ -321,6 +322,7 @@ function PartnerPerksTab() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-text">{claimPerk.partner}</p>
+                <p className="text-xs font-semibold text-amber mb-2">{claimPerk.perkValue}</p>
                 <p className="text-xs text-text-muted">{claimPerk.category}</p>
               </div>
             </div>

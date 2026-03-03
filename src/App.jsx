@@ -13,7 +13,7 @@ import KPIDashboard from './pages/KPIDashboard'
 import Milestones from './pages/Milestones'
 import DocumentLibrary from './pages/DocumentLibrary'
 import Notifications from './pages/Notifications'
-import StudioChat from './pages/StudioChat'
+import StudioBoard from './pages/StudioBoard'
 
 function PortalRoutes() {
   return (
@@ -29,7 +29,7 @@ function PortalRoutes() {
       <Route path="/milestones" element={<Milestones />} />
       <Route path="/document-library" element={<DocumentLibrary />} />
       <Route path="/notifications" element={<Notifications />} />
-      <Route path="/studio-chat" element={<StudioChat />} />
+      <Route path="/studio-board" element={<StudioBoard />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

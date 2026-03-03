@@ -5,6 +5,15 @@ import Modal from '../components/Modal'
 import SidePanel from '../components/SidePanel'
 import { useApp } from '../context/AppContext'
 
+const MILESTONE_UNLOCKS = {
+  'ms-1': 'Bank account opening and first employment contracts',
+  'ms-2': 'Technical architecture reviews and infrastructure setup',
+  'ms-3': 'First customer outreach and pilot onboarding support',
+  'ms-4': 'Seed fundraising preparation and investor introduction network',
+  'ms-5': 'Revenue recognition tracking and finance audit readiness',
+  'ms-6': 'Series A preparation and scaling infrastructure',
+}
+
 const STATUS_CONFIG = {
   achieved: {
     label: 'Achieved',
@@ -70,6 +79,10 @@ export default function Milestones() {
   const [newName, setNewName] = useState('')
   const [newDate, setNewDate] = useState('')
   const [newDesc, setNewDesc] = useState('')
+  const [newPhase, setNewPhase] = useState('Phase 1')
+
+  // Celebration animation state
+  const [celebratingId, setCelebratingId] = useState(null)
 
   function openPanel(milestone) {
     setSelectedMilestone(milestone)
@@ -126,6 +139,9 @@ export default function Milestones() {
     }))
     setPanelStatus('achieved')
 
+    setCelebratingId(selectedMilestone.id)
+    setTimeout(() => setCelebratingId(null), 2000)
+
     setLogModalOpen(false)
     setLogDate(new Date().toISOString().slice(0, 10))
     setLogNote('')
@@ -147,12 +163,14 @@ export default function Milestones() {
       description: newDesc.trim(),
       notes: '',
       history: [],
+      phase: newPhase,
     })
 
     setAddModalOpen(false)
     setNewName('')
     setNewDate('')
     setNewDesc('')
+    setNewPhase('Phase 1')
     addToast('Milestone added', 'success')
   }
 
@@ -162,8 +180,29 @@ export default function Milestones() {
     : null
 
   return (
-    <Layout title="Milestones" subtitle="Track your venture milestones and key achievements">
+    <Layout title="Venture Journey" subtitle="Track milestones and celebrate progress">
       <div className="p-6 max-w-3xl mx-auto">
+
+        {/* Summary bar */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="card p-4 text-center">
+            <div className="text-2xl font-bold text-text">{milestones.length}</div>
+            <div className="text-xs text-text-muted mt-0.5">Total</div>
+          </div>
+          <div className="card p-4 text-center border-pulse-green/30">
+            <div className="text-2xl font-bold text-pulse-green">{milestones.filter(m => m.status === 'achieved').length}</div>
+            <div className="text-xs text-text-muted mt-0.5">Achieved</div>
+          </div>
+          <div className="card p-4 text-center border-amber/30">
+            <div className="text-2xl font-bold text-amber">{milestones.filter(m => m.status === 'upcoming').length}</div>
+            <div className="text-xs text-text-muted mt-0.5">On Track</div>
+          </div>
+          <div className="card p-4 text-center border-pulse-red/30">
+            <div className="text-2xl font-bold text-pulse-red">{milestones.filter(m => m.status === 'at-risk' || m.status === 'missed').length}</div>
+            <div className="text-xs text-text-muted mt-0.5">At Risk</div>
+          </div>
+        </div>
+
         {/* Header row */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -193,47 +232,57 @@ export default function Milestones() {
                     <TimelineDot status={milestone.status} />
                   </div>
 
-                  {/* Card */}
-                  <div
-                    className={`flex-1 mb-4 card p-4 cursor-pointer hover:border-amber/40 transition-all duration-150 ${
-                      milestone.status === 'at-risk' ? 'border-l-2 border-l-amber' :
-                      milestone.status === 'achieved' ? 'border-l-2 border-l-pulse-green' :
-                      milestone.status === 'missed' ? 'border-l-2 border-l-pulse-red' : ''
-                    }`}
-                    onClick={() => openPanel(milestone)}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="font-semibold text-text text-sm">{milestone.name}</span>
-                          <StatusBadge status={milestone.status} />
-                        </div>
-                        {milestone.description && (
-                          <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{milestone.description}</p>
-                        )}
-                        <div className="flex items-center gap-4 mt-2">
-                          <div className="flex items-center gap-1 text-xs text-text-dim">
-                            <CalendarDays size={11} />
-                            <span>Planned: {milestone.plannedDate || '—'}</span>
+                  {/* Card + acknowledgment wrapper */}
+                  <div className="flex-1">
+                    <div
+                      className={`mb-1 card p-4 cursor-pointer hover:border-amber/40 transition-all duration-150 ${
+                        milestone.status === 'at-risk' ? 'border-l-2 border-l-amber' :
+                        milestone.status === 'achieved' ? 'border-l-2 border-l-pulse-green' :
+                        milestone.status === 'missed' ? 'border-l-2 border-l-pulse-red' : ''
+                      } ${celebratingId === milestone.id ? 'ring-2 ring-pulse-green ring-offset-1 animate-pulse' : ''}`}
+                      onClick={() => openPanel(milestone)}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <span className="font-semibold text-text text-sm">{milestone.name}</span>
+                            <StatusBadge status={milestone.status} />
                           </div>
-                          {milestone.status === 'achieved' && milestone.actualDate && (
-                            <div className="flex items-center gap-1 text-xs text-pulse-green">
-                              <CheckCircle2 size={11} />
-                              <span>Achieved: {milestone.actualDate}</span>
-                            </div>
+                          {milestone.description && (
+                            <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{milestone.description}</p>
                           )}
+                          <div className="flex items-center gap-4 mt-2">
+                            <div className="flex items-center gap-1 text-xs text-text-dim">
+                              <CalendarDays size={11} />
+                              <span>Planned: {milestone.plannedDate || '—'}</span>
+                            </div>
+                            {milestone.status === 'achieved' && milestone.actualDate && (
+                              <div className="flex items-center gap-1 text-xs text-pulse-green">
+                                <CheckCircle2 size={11} />
+                                <span>Achieved: {milestone.actualDate}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
+                        <config.icon
+                          size={16}
+                          className={
+                            milestone.status === 'achieved' ? 'text-pulse-green' :
+                            milestone.status === 'at-risk' ? 'text-amber' :
+                            milestone.status === 'missed' ? 'text-pulse-red' :
+                            'text-text-dim'
+                          }
+                        />
                       </div>
-                      <config.icon
-                        size={16}
-                        className={
-                          milestone.status === 'achieved' ? 'text-pulse-green' :
-                          milestone.status === 'at-risk' ? 'text-amber' :
-                          milestone.status === 'missed' ? 'text-pulse-red' :
-                          'text-text-dim'
-                        }
-                      />
                     </div>
+
+                    {/* Studio acknowledgment note */}
+                    {milestone.status === 'achieved' && (
+                      <div className="flex items-center gap-2 ml-8 mb-3 -mt-2 px-3 py-1.5 bg-pulse-green/5 border border-pulse-green/15 rounded-lg w-fit">
+                        <div className="w-5 h-5 rounded-full bg-amber/20 border border-amber/30 flex items-center justify-center text-[10px] font-bold text-amber shrink-0">SR</div>
+                        <p className="text-xs text-text-muted">Sarah Al-Rashid congratulated you on this milestone 🎉</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )
@@ -286,6 +335,16 @@ export default function Milestones() {
                 </p>
               </div>
             </div>
+
+            {/* What This Unlocks */}
+            {MILESTONE_UNLOCKS[liveMilestone.id] && (
+              <div>
+                <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">What This Unlocks</label>
+                <div className="bg-amber/5 border border-amber/20 rounded-xl px-4 py-3">
+                  <p className="text-sm text-amber">{MILESTONE_UNLOCKS[liveMilestone.id]}</p>
+                </div>
+              </div>
+            )}
 
             {/* Description */}
             {liveMilestone.description && (
@@ -403,7 +462,7 @@ export default function Milestones() {
       {/* ─── Add Custom Milestone Modal ─── */}
       <Modal
         isOpen={addModalOpen}
-        onClose={() => { setAddModalOpen(false); setNewName(''); setNewDate(''); setNewDesc('') }}
+        onClose={() => { setAddModalOpen(false); setNewName(''); setNewDate(''); setNewDesc(''); setNewPhase('Phase 1') }}
         title="Add Custom Milestone"
       >
         <div className="p-6 space-y-4">
@@ -439,9 +498,22 @@ export default function Milestones() {
             />
           </div>
 
+          <div>
+            <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Linked Phase</label>
+            <select
+              value={newPhase}
+              onChange={e => setNewPhase(e.target.value)}
+              className="input-field w-full text-sm"
+            >
+              <option value="Phase 1">Phase 1 — Foundation</option>
+              <option value="Phase 2">Phase 2 — Build</option>
+              <option value="Phase 3">Phase 3 — Scale</option>
+            </select>
+          </div>
+
           <div className="flex justify-end gap-2 pt-2">
             <button
-              onClick={() => { setAddModalOpen(false); setNewName(''); setNewDate(''); setNewDesc('') }}
+              onClick={() => { setAddModalOpen(false); setNewName(''); setNewDate(''); setNewDesc(''); setNewPhase('Phase 1') }}
               className="btn-secondary text-sm"
             >
               Cancel

@@ -113,7 +113,7 @@ function TeamCard({ member, index, onBook, onMessage }) {
       <div className="flex gap-2 mt-auto pt-1">
         <button className="btn-secondary flex items-center gap-1.5 text-xs" onClick={onBook}>
           <CalendarDays className="w-3.5 h-3.5" />
-          Book
+          Office Hours
         </button>
         <button className="btn-ghost flex items-center gap-1.5 text-xs" onClick={onMessage}>
           <MessageSquare className="w-3.5 h-3.5" />
@@ -153,7 +153,7 @@ function SSUCard({ member, index, onBook, onMessage, onRequest }) {
       <div className="flex flex-wrap gap-2 mt-auto pt-1">
         <button className="btn-secondary flex items-center gap-1.5 text-xs" onClick={onBook}>
           <CalendarDays className="w-3.5 h-3.5" />
-          Book
+          Office Hours
         </button>
         <button className="btn-ghost flex items-center gap-1.5 text-xs" onClick={onMessage}>
           <MessageSquare className="w-3.5 h-3.5" />
@@ -175,7 +175,7 @@ export default function MyTeam() {
 
   function handleMessage(member) {
     setSelectedChannel(member.channel);
-    navigate('/studio-chat');
+    navigate('/studio-board');
   }
 
   function handleRequest(member) {

@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import {
   Home, BookOpen, Wrench, Map, Layers, HelpCircle, Users,
-  BarChart2, Flag, FolderOpen, Bell, MessageSquare, Zap, Lock,
+  BarChart2, Flag, FolderOpen, Bell, Layout, Zap, Lock,
 } from 'lucide-react'
 
 const navSections = [
@@ -26,14 +26,14 @@ const navSections = [
     items: [
       { path: '/request-help', label: 'Request Help', icon: HelpCircle },
       { path: '/my-team', label: 'My Team', icon: Users },
-      { path: '/studio-chat', label: 'Studio Chat', icon: MessageSquare },
+      { path: '/studio-board', label: 'Studio Board', icon: Layout },
     ],
   },
   {
     label: 'Track',
     items: [
       { path: '/kpi-dashboard', label: 'KPI Dashboard', icon: BarChart2 },
-      { path: '/milestones', label: 'Milestones', icon: Flag },
+      { path: '/milestones', label: 'Venture Journey', icon: Flag },
       { path: '/document-library', label: 'Document Library', icon: FolderOpen },
       { path: '/notifications', label: 'Notifications', icon: Bell, badgeKey: 'notifications' },
     ],

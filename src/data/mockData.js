@@ -239,116 +239,116 @@ export const studioServices = [
   {
     id: 'ss-1', name: 'Legal & Compliance', icon: '⚖️', description: 'Entity formation, contract review, regulatory guidance for KSA market.',
     sla: '3–5 business days', contact: 'Khaled Al-Otaibi, Legal Counsel', category: 'Legal',
-    article: `SSU Legal provides end-to-end legal support for all Sanabil Studio portfolio ventures. Our team handles everything from commercial registration and shareholder agreements to employment law and regulatory filings.
+    article: `SSU Legal provides end-to-end legal support for all Sanabil Studio portfolio ventures. Our team handles everything from commercial registration (CR) and Memorandum of Association (AoA) drafting to shareholder agreements, employment contracts, and MISA fast-track filings. All legal work is done in-house by our Saudi-qualified counsel team with deep experience in the KSA Companies Law (2022 edition) and the new Foreign Investment Law amendments.
 
-For Tradepay, this includes SAMA fintech licensing guidance, merchant agreements, and ongoing compliance monitoring as Saudi payment regulations evolve.
+For fintech ventures specifically, we provide regulatory mapping against SAMA's Open Banking framework, BNPL licensing requirements, and the Saudi Central Bank's Regulatory Sandbox process. We have supported 12 previous Sanabil portfolio companies through their regulatory submissions and can fast-track pre-application advisory sessions with SAMA through our existing relationship.
 
-Our legal team operates under a service-level agreement of 3–5 business days for standard requests. Urgent matters (flagged as High or Urgent in the Request Help system) are escalated to a 24-hour response time.`,
+All engagement starts with a kick-off session within 3 business days of your request. Scope is confirmed upfront, and you'll always know what we're working on and when it will be delivered. Urgent matters (court deadlines, regulatory filing windows) are prioritized on the same business day. Reach out via Request Help and mark the category as Legal.`,
     links: [
-      { label: 'MISA Business Registration Guide', url: '#' },
-      { label: 'SAMA Fintech Regulatory Sandbox', url: '#' },
-      { label: 'ZATCA VAT Registration Portal', url: '#' },
-      { label: 'SAIP Trademark Filing', url: '#' },
+      { label: 'MISA Foreign Investment Guide (2025)', url: '#' },
+      { label: 'SAMA Open Banking Regulatory Framework', url: '#' },
+      { label: 'KSA Companies Law — Official Text', url: '#' },
+      { label: 'Saudi Central Bank Sandbox Application Portal', url: '#' },
     ],
   },
   {
     id: 'ss-2', name: 'Finance & Accounting', icon: '💰', description: 'Financial modeling, accounting setup, audit prep, and tax compliance.',
     sla: '2–3 business days', contact: 'Nora Faisal, Finance Lead', category: 'Finance',
-    article: `SSU Finance provides comprehensive financial support from Day 1. Our team helps you set up your chart of accounts, configure Qoyod (our recommended accounting platform), and establish monthly reporting cadences that align with IFRS standards.
+    article: `SSU Finance provides comprehensive financial support from Day 1. Our team helps you set up your chart of accounts, configure Qoyod (our recommended accounting platform, available at 50% off via the Partner Perks tab), and establish monthly reporting cadences that align with IFRS standards. We prepare board-ready financials every quarter and can support ZATCA e-invoicing compliance, which is mandatory for all Saudi companies.
 
-For Tradepay specifically, we support fintech-specific financial modeling including unit economics for payment processing, interchange revenue modeling, and working capital analysis.
+For early-stage ventures, we build your financial model in the first month — including 18-month cash flow projections, unit economics analysis, and scenario planning. We run monthly finance reviews on the last Thursday of each month to align on burn rate, runway, and upcoming funding needs. These sessions are 30–45 minutes and can be joined by your lead investor or board observer if appropriate.
 
-Monthly financial reviews are scheduled with your Portfolio Manager and Finance Lead to track burn rate, runway, and KPI performance against plan.`,
+Our finance team also manages the relationship with your external auditor (required for CR renewal), coordinates with GAZT for VAT filings, and can prepare investor-grade data rooms for fundraising rounds. Nora Faisal leads all finance engagements and has prior experience at Big 4 firms in Riyadh.`,
     links: [
-      { label: 'Qoyod Accounting Platform', url: '#' },
-      { label: 'SSU Financial Model Template', url: '#' },
-      { label: 'ZATCA E-Invoicing Requirements', url: '#' },
+      { label: 'ZATCA E-Invoicing Portal', url: '#' },
+      { label: 'Qoyod Setup Guide for Sanabil Ventures', url: '#' },
+      { label: 'IFRS for SMEs — SOCPA Reference', url: '#' },
     ],
   },
   {
     id: 'ss-3', name: 'Talent & Recruiting', icon: '👥', description: 'Hiring support, job descriptions, candidate sourcing, and HR setup.',
     sla: '5–7 business days', contact: 'Rayan Al-Ghamdi, Talent Partner', category: 'Talent',
-    article: `The SSU Talent team helps portfolio ventures build their founding teams and early hires. We support job description writing, posting on premium job boards (LinkedIn, Bayt, Wellfound), screening, and interview coordination.
+    article: `The SSU Talent team helps portfolio ventures build their founding teams and early hires. We support job description writing, posting on premium job boards (LinkedIn, Bayt, Wellfound), candidate screening, and interview coordination. For senior hires (CTO, CFO, Head of Sales), we run structured executive search processes with a shortlist typically ready within 3 weeks of kick-off.
 
-For senior roles (C-suite and Director level), we also activate our network of advisors and VC connections for warm referrals. Our Talent Partner can also negotiate offer terms and help structure equity compensation packages.
+We have a proprietary candidate database of 400+ pre-vetted Saudi tech and business talent built over 3 years of running studio search processes. This database is continuously updated and includes passive candidates who are not actively searching job boards. For your most critical hires, this network is your biggest advantage over going to a traditional recruiter.
 
-HR infrastructure setup (GOSI, payroll, onboarding processes) is included as part of standard Talent support during Phase 1.`,
+Rayan Al-Ghamdi leads talent for all Sanabil ventures and will be your primary point of contact. He runs weekly candidate update calls during active searches. We also support employment contract drafting (in coordination with the Legal team) and onboarding checklists to ensure new hires are set up correctly under KSA Labour Law from day one.`,
     links: [
-      { label: 'SSU Hiring Templates Library', url: '#' },
-      { label: 'GOSI Registration Portal', url: '#' },
-      { label: 'Bayt Posting Guidelines', url: '#' },
+      { label: 'SSU Talent Intake Form', url: '#' },
+      { label: 'Saudi Labour Law Guide for Startups', url: '#' },
+      { label: 'KSA Salary Benchmark Report 2025 (Tech)', url: '#' },
     ],
   },
   {
     id: 'ss-4', name: 'Product Design', icon: '🎨', description: 'UI/UX design, brand identity, user research, and design systems.',
     sla: '3–5 business days', contact: 'Layla Mahmoud, Product Manager', category: 'Operations',
-    article: `SSU Product Design supports ventures with world-class design across product, brand, and marketing. Our design team uses Figma as the primary tool and delivers work in structured sprints aligned with your development cycles.
+    article: `SSU Product Design supports ventures with world-class design across product, brand, and marketing. Our design team uses Figma as the primary tool and delivers work in structured 2-week sprints aligned with your development cycles. We can take a concept from user research brief to final hi-fidelity prototype — ready for developer handoff — within 4–6 weeks depending on scope.
 
-For new ventures in Phase 1, we offer a Brand Starter Pack: logo, color palette, typography system, and basic UI component library. This gives you a professional identity from Day 1 without hiring a full-time designer.
+For early-stage ventures, the first engagement is typically a product strategy workshop where we map your user journeys, define your core use case, and establish a design language (colours, typography, component library) that can scale with your product. This workshop is run as a half-day session with your founding team and produces a Figma starter kit and UX brief.
 
-For product UX, we recommend engaging our team for user research sessions, wireframing, and prototype testing before committing engineering resources to build.`,
+Layla Mahmoud leads product design engagements and has shipped products used by millions of users across fintech, marketplace, and SaaS contexts in the GCC. She is also your embedded Portfolio Manager and can join your weekly team stand-ups to ensure design is not a bottleneck at any stage of development.`,
     links: [
-      { label: 'Brand Starter Pack Request Form', url: '#' },
-      { label: 'Figma Design System Starter', url: '#' },
-      { label: 'User Research Session Booking', url: '#' },
-      { label: 'Design Review Calendar', url: '#' },
+      { label: 'SSU Figma Design System Template', url: '#' },
+      { label: 'Product Design Brief Template', url: '#' },
+      { label: 'GCC UX Research Panel Access', url: '#' },
     ],
   },
   {
     id: 'ss-5', name: 'Tech Infrastructure', icon: '🔧', description: 'Cloud setup, DevOps, security review, and architecture guidance.',
     sla: '2–4 business days', contact: 'Omar Hassan, Venture Architect', category: 'Operations',
-    article: `Omar Hassan provides technical architecture guidance and infrastructure setup support for all portfolio ventures. For fintech ventures like Tradepay, this includes secure cloud architecture design (AWS or GCP), DevSecOps pipeline setup, and PCI-DSS compliance planning.
+    article: `Omar Hassan provides technical architecture guidance and infrastructure setup for all portfolio ventures. For fintech ventures like Tradepay, this includes secure cloud architecture design on AWS (Bahrain region, me-south-1), DevSecOps pipeline setup using GitHub Actions, containerization with Docker and ECS, and PCI-DSS compliance scoping for payment processing environments.
 
-Our standard tech stack recommendations for Saudi-based fintechs include AWS Bahrain region for data residency compliance, Terraform for infrastructure-as-code, and GitHub Actions for CI/CD.
+The first engagement is a 2-hour architecture review where we assess your current stack (or design one from scratch), identify security and scalability risks, and produce a written architecture recommendation document. This document can be shared with your CTO candidate as a technical brief or with your lead investor as part of diligence. We also perform quarterly security reviews to ensure your posture is appropriate for your stage and data sensitivity.
 
-Security reviews are mandatory before any production deployment. Contact Omar at least 2 weeks before your planned launch date to schedule a security architecture review.`,
+Omar has built infrastructure for 8 Sanabil portfolio companies and can activate the AWS Activate credits ($100K, available in Partner Perks) for qualified ventures within 24 hours. He also maintains relationships with Lean Technologies for open banking API integration and can make introductions for KSA payment rails setup.`,
     links: [
       { label: 'AWS Bahrain Region Setup Guide', url: '#' },
-      { label: 'PCI-DSS Checklist for Fintechs', url: '#' },
-      { label: 'SSU Security Review Template', url: '#' },
+      { label: 'Lean Technologies Open Banking API Docs', url: '#' },
+      { label: 'PCI-DSS Scoping Tool for Fintech', url: '#' },
+      { label: 'DevSecOps Runbook Template', url: '#' },
     ],
   },
   {
     id: 'ss-6', name: 'Market Research', icon: '📊', description: 'Market sizing, competitive intelligence, and customer discovery support.',
     sla: '5–7 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
-    article: `The SSU research team provides market intelligence to help you make data-driven product and go-to-market decisions. We have access to premium databases including SCAICT reports, Euromonitor, and PitchBook for market sizing and competitive benchmarking.
+    article: `The SSU research team provides market intelligence to help you make data-driven product and go-to-market decisions. We have access to premium databases including SCAICT reports, Euromonitor, PitchBook GCC deal flow data, and SAMA's financial sector publications. Custom research requests are turned around in 5–7 business days with a structured output document ready to embed in your investor deck or board materials.
 
-For Tradepay, we have already compiled a B2B payments market analysis covering Saudi Arabia and GCC. This report covers market size ($4.2B TAM), competitive landscape, and regulatory environment — available in your Document Library.
+For most early-stage ventures, we run a market sizing workshop in month 1 to establish your TAM, SAM, and SOM with defensible methodology. This workshop uses a combination of top-down (SCAICT data) and bottom-up (customer discovery) approaches and produces a 1-page market size summary that can be updated quarterly as your real-world data improves the estimates.
 
-Custom research requests can be submitted via the Request Help system under the Operations category.`,
+We also run competitive intelligence briefs on request — mapping direct and indirect competitors, their pricing models, funding history, and positioning. These briefs are used by founders for product differentiation decisions and by the portfolio team for investment thesis validation. Sarah Al-Rashid leads market research engagements and can be reached via the Request Help system.`,
     links: [
-      { label: 'B2B Payments Market Report (GCC)', url: '#' },
-      { label: 'SCAICT Digital Payments Data', url: '#' },
-      { label: 'Customer Discovery Interview Template', url: '#' },
+      { label: 'SCAICT Digital Economy Report 2025', url: '#' },
+      { label: 'Euromonitor Saudi Arabia Country Report', url: '#' },
+      { label: 'PitchBook GCC Startup Deal Flow H2 2025', url: '#' },
     ],
   },
   {
     id: 'ss-7', name: 'PR & Communications', icon: '📣', description: 'Media relations, content strategy, thought leadership, and press releases.',
     sla: '7–10 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
-    article: `SSU's communications team helps portfolio ventures build their brand presence in the Saudi and regional startup ecosystem. We have established relationships with key media outlets including Arab News, Saudi Gazette, Wamda, and Magnitt.
+    article: `SSU's communications team helps portfolio ventures build their brand presence in the Saudi and regional startup ecosystem. We have established relationships with key media outlets including Arab News, Saudi Gazette, Wamda, Magnitt, and Sifted, and can place well-crafted stories at the right time in your company's journey. For most ventures, this means securing first press at product launch and again at fundraising announcement.
 
-For Phase 1 ventures, we recommend focusing on LinkedIn presence and founder personal branding rather than press outreach. Our team can help craft your LinkedIn strategy, write thought leadership articles, and manage your company page.
+PR strategy begins with a messaging workshop where we define your company's narrative, key messages, and spokesperson training points. This workshop is held before any public announcements and ensures your founding team is aligned on how to talk about the company to media, investors, and potential customers. We also prepare a press kit (company backgrounder, founder bios, product screenshots, usage data) that can be activated at short notice.
 
-Formal PR campaigns (press releases, media briefings) are typically activated at the time of a significant announcement: product launch, funding, or major partnership.`,
+For ongoing communications, we support monthly thought leadership content (LinkedIn articles, conference speaking submissions, podcast pitches) that builds the founder's personal brand alongside the company. A strong founder profile accelerates hiring, fundraising, and customer trust in the GCC market more than in most global markets. Sarah Al-Rashid manages all PR relationships and can fast-track introductions based on story timing.`,
     links: [
-      { label: 'SSU PR Request Form', url: '#' },
-      { label: 'LinkedIn Personal Brand Guide', url: '#' },
-      { label: 'Press Release Template', url: '#' },
+      { label: 'Magnitt Saudi Arabia Startup Database', url: '#' },
+      { label: 'Wamda Editorial Guidelines', url: '#' },
+      { label: 'SSU Press Kit Template (Figma)', url: '#' },
     ],
   },
   {
     id: 'ss-8', name: 'Investor Relations', icon: '🤝', description: 'Fundraising prep, investor introductions, pitch coaching, and data room setup.',
     sla: '5–7 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
-    article: `Sarah Al-Rashid leads investor relations support for all portfolio ventures. SSU has deep connections with 40+ active investors in the Saudi and GCC ecosystem, including family offices, VCs, and corporate venture arms.
+    article: `Sarah Al-Rashid leads investor relations support for all portfolio ventures. SSU has deep connections with 40+ active investors in the Saudi and GCC ecosystem, including family offices (Al-Faisaliah Group, Kingdom Holding), VCs (STV, Sanabil Investments, Outliers Venture Capital), and corporate venture arms (STC Ventures, Aramco Ventures). Introductions are made selectively based on fit — we do not blast your deck to a list.
 
-For Tradepay, we recommend beginning fundraising preparation at the start of Month 4 (post-product launch), targeting a Seed round of $2–3M. This timeline allows you to show 2–3 months of revenue traction before approaching investors.
+Fundraising preparation starts 4–6 months before you plan to raise. The standard package includes: pitch deck review and refinement (we've seen 200+ decks and know what GCC investors look for), financial model validation, data room setup (using Notion or Carta), and a structured investor outreach pipeline with 15–20 qualified targets per raise. We also run mock pitch sessions to prepare you for common investor questions on unit economics, competitive differentiation, and team gaps.
 
-Our fundraising support package includes: pitch deck review, financial model validation, investor targeting, warm introductions, and term sheet coaching.`,
+For post-term-sheet support, SSU Legal works in parallel to manage the due diligence process and flag any red-line issues in term sheet language. Our goal is to close your round with the right partner at the right valuation — not just the fastest yes. Sarah is available for weekly IR updates during active fundraising processes and can join investor calls when appropriate.`,
     links: [
-      { label: 'SSU Investor Network Overview', url: '#' },
-      { label: 'Pitch Deck Template (SSU Standard)', url: '#' },
-      { label: 'Data Room Setup Guide', url: '#' },
-      { label: 'Term Sheet Basics for Founders', url: '#' },
+      { label: 'STV Portfolio Application Process', url: '#' },
+      { label: 'Sanabil Investments Venture Application', url: '#' },
+      { label: 'GCC Term Sheet Red Lines — Founder Guide', url: '#' },
+      { label: 'Carta Data Room Setup for KSA Companies', url: '#' },
     ],
   },
 ]
@@ -370,28 +370,58 @@ export const templates = [
 
 export const partnerPerks = [
   {
-    id: 'pp-1', partner: 'AWS Activate', logo: 'AWS', description: '$100,000 in AWS credits for qualifying Sanabil Studio portfolio companies. Access to AWS startup support team and technical reviews.', category: 'Cloud',
-    instructions: 'Use promo code SANABIL2026 at aws.amazon.com/activate. You will need to provide your Sanabil Studio portfolio company email. Credits are valid for 24 months from activation.',
+    id: 'pp-1',
+    partner: 'AWS Activate',
+    logo: 'AWS',
+    perkValue: '$100,000 in credits',
+    description: '$100,000 in AWS cloud credits for qualifying Sanabil Studio portfolio companies. Includes startup support, architecture reviews, and dedicated technical account management.',
+    category: 'Cloud',
+    instructions: 'Use promo code SANABIL2026 at aws.amazon.com/activate. Provide your Sanabil Studio portfolio company email. Credits are valid for 24 months from activation. Contact Omar Hassan for the activation letter.',
   },
   {
-    id: 'pp-2', partner: 'Notion for Startups', logo: 'NO', description: '6 months free Notion Business plan for your entire team. Includes unlimited blocks, version history, and API access.', category: 'Productivity',
-    instructions: 'Go to notion.so/startups, click Apply, and use the referral code SANABIL. Omar Hassan can provide an additional reference letter if required.',
+    id: 'pp-2',
+    partner: 'Clio Legal Software',
+    logo: 'CL',
+    perkValue: '6 months free',
+    description: 'Free access to Clio Grow (client intake and legal CRM) for 6 months, then 40% off for 12 months. Ideal for tracking legal matters, contracts, and compliance workflows.',
+    category: 'Legal Tools',
+    instructions: 'Visit clio.com/partnerships and enter code SANABILKSA at checkout. Khaled Al-Otaibi from the SSU Legal team can provide a referral if needed to unlock additional features.',
   },
   {
-    id: 'pp-3', partner: 'Stripe Atlas', logo: 'ST', description: 'Free Stripe Atlas incorporation plus 12 months of Stripe fee waiver on first $20,000 in payments processed.', category: 'Payments',
-    instructions: 'Apply at stripe.com/atlas/partners and select Sanabil Studio as your accelerator partner. Processing support from SSU Finance team.',
+    id: 'pp-3',
+    partner: 'Regus Co-working Riyadh',
+    logo: 'RG',
+    perkValue: '3 months free',
+    description: 'Three months of free hot-desking or private office access at the Regus King Fahd Road location in Riyadh. Perfect for early team meeting spaces and client visits.',
+    category: 'Office Space',
+    instructions: 'Email coworking@sanabilstudio.com with your company name and team size. Sarah Al-Rashid will coordinate directly with the Regus account manager to activate your membership within 2 business days.',
   },
   {
-    id: 'pp-4', partner: 'HubSpot for Startups', logo: 'HS', description: '90% off HubSpot CRM, Marketing Hub, and Sales Hub for the first year. Full-featured platform for your go-to-market motion.', category: 'CRM',
-    instructions: 'Contact HubSpot at hubspot.com/startups, mention Sanabil Studio, and your discount will be applied within 3 business days. Discounts stack with existing offers.',
+    id: 'pp-4',
+    partner: 'Qoyod Accounting',
+    logo: 'QY',
+    perkValue: '12 months at 50% off',
+    description: 'Qoyod is the recommended accounting software for Sanabil Studio portfolio companies in KSA. Get 50% off for your first year — ZATCA-compliant invoicing, payroll, and VAT filing built in.',
+    category: 'Accounting',
+    instructions: 'Sign up at qoyod.com and use promo code STUDIO50. Nora Faisal from the SSU Finance team is available for onboarding support and can set up your chart of accounts in the first session.',
   },
   {
-    id: 'pp-5', partner: 'Linear', logo: 'LI', description: '12 months free Linear project management for teams under 10. Perfect for product and engineering sprint management.', category: 'Product',
-    instructions: 'Email linear@sanabilstudio.com with your company name and we will provision your Linear workspace under the SSU deal within 1 business day.',
+    id: 'pp-5',
+    partner: 'Bayzat HR Platform',
+    logo: 'BZ',
+    perkValue: '40% off annually',
+    description: 'Bayzat is a GCC-native HR and payroll platform. Get 40% off your first annual subscription — covers automated payroll, leave management, and employee benefits suited for KSA Labour Law compliance.',
+    category: 'HR Platform',
+    instructions: 'Contact Bayzat at bayzat.com/partners and mention Sanabil Studio to unlock the discount. Rayan Al-Ghamdi from SSU Talent can assist with onboarding and configuration for your first hire.',
   },
   {
-    id: 'pp-6', partner: 'Intercom', logo: 'IN', description: 'Early Stage program: $249/month flat fee for full Intercom suite (normally $1,200+/month). Includes product tours, chatbots, and support desk.', category: 'Support',
-    instructions: 'Apply at intercom.com/early-stage, mention Sanabil Studio in your application. Sarah Al-Rashid can provide a reference to fast-track approval.',
+    id: 'pp-6',
+    partner: 'Riyad Bank Fast Track',
+    logo: 'RB',
+    perkValue: '5-day account opening',
+    description: 'Sanabil Studio has a partnership with Riyad Bank to fast-track business account opening for portfolio companies. Skip the standard 6–8 week queue and get a corporate account in as little as 5 business days.',
+    category: 'Banking',
+    instructions: 'Email banking@sanabilstudio.com with your commercial registration number and company name. Sarah Al-Rashid will connect you with the Riyad Bank relationship manager directly. Have your CR, AoA, and shareholder IDs ready.',
   },
 ]
 

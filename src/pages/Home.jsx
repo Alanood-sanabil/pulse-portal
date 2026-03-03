@@ -51,9 +51,17 @@ function ActivityIcon({ type }) {
 const TOTAL_TASKS = 11
 const PHASE1_TASKS = tasks.slice(0, 5)
 
+const MOODS_MAP = {
+  struggling: { emoji: '😰', label: 'Struggling' },
+  tough: { emoji: '😓', label: 'Tough week' },
+  steady: { emoji: '😐', label: 'Steady' },
+  good: { emoji: '🙂', label: 'Good progress' },
+  great: { emoji: '🚀', label: 'Great week' },
+}
+
 export default function Home() {
   const navigate = useNavigate()
-  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel } = useApp()
+  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones } = useApp()
 
   const [selectedTask, setSelectedTask] = useState(null)
   const [showBooking, setShowBooking] = useState(false)
@@ -82,6 +90,16 @@ export default function Home() {
   const svgRadius = 54
   const svgCircumference = 2 * Math.PI * svgRadius
   const svgDash = (progressPct / 100) * svgCircumference
+
+  const isCompanyHome = progressPct >= 80
+
+  const anyKpiUpdated = !!(kpiData?.mrrUpdated || kpiData?.burnRateUpdated)
+  const taskScore = Math.round((doneCount / TOTAL_TASKS) * 100)
+  const healthScore = Math.min(100, Math.round(taskScore * 0.4 + 30 + (pulseCheck ? 15 : 0) + (anyKpiUpdated ? 20 : 0)))
+
+  const upcomingMilestones = milestones ? milestones.filter(m => m.status !== 'achieved').slice(0, 3) : []
+
+  const overdueTasks = tasks.filter(t => taskStatuses[t.id] === 'overdue' || taskStatuses[t.id] === 'not-started')
 
   return (
     <Layout title="Founder Home" subtitle="Tradepay · Spin-out Phase 1">
@@ -135,15 +153,15 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <AlertTriangle size={18} className="text-amber shrink-0" />
               <p className="text-sm text-amber font-medium">
-                Your weekly update is due.{' '}
-                <span className="font-normal text-amber/80">Keep your PM informed of progress.</span>
+                Your Pulse Check is due.{' '}
+                <span className="font-normal text-amber/80">Submit your weekly pulse — takes 60 seconds.</span>
               </p>
             </div>
             <button
               onClick={() => navigate('/kpi-dashboard')}
               className="btn-primary shrink-0 flex items-center gap-2 text-xs"
             >
-              Submit Update
+              Submit Pulse
               <ArrowRight size={13} />
             </button>
           </div>
@@ -155,97 +173,178 @@ export default function Home() {
           {/* ── LEFT COLUMN ── */}
           <div className="space-y-6">
 
-            {/* ── Phase Progress + Progress Ring Row ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
-              {/* Phase Cards */}
-              <div className="grid grid-cols-3 gap-3">
-                {/* Phase 1 - Active */}
-                <button
-                  onClick={() => navigate('/onboarding')}
-                  className="card border-amber/40 text-left hover:border-amber/70 transition-colors group"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="badge bg-amber/15 text-amber text-xs">Phase 1</span>
-                    <ChevronRight size={14} className="text-amber group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                  <p className="text-sm font-semibold text-text mb-1">Foundation</p>
-                  <p className="text-xs text-text-muted mb-3">{doneCount}/{TOTAL_TASKS} tasks</p>
-                  <div className="w-full bg-bg-elevated rounded-full h-1.5">
-                    <div
-                      className="bg-amber h-1.5 rounded-full transition-all duration-500"
-                      style={{ width: `${progressPct}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-amber mt-1.5">{progressPct}% complete</p>
-                </button>
+            {/* ── Phase Progress + Progress Ring Row (only when not company home) ── */}
+            {!isCompanyHome && (
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
+                {/* Phase Cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Phase 1 - Active */}
+                  <button
+                    onClick={() => navigate('/onboarding')}
+                    className="card border-amber/40 text-left hover:border-amber/70 transition-colors group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="badge bg-amber/15 text-amber text-xs">Phase 1</span>
+                      <ChevronRight size={14} className="text-amber group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                    <p className="text-sm font-semibold text-text mb-1">Foundation</p>
+                    <p className="text-xs text-text-muted mb-3">{doneCount}/{TOTAL_TASKS} tasks</p>
+                    <div className="w-full bg-bg-elevated rounded-full h-1.5">
+                      <div
+                        className="bg-amber h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${progressPct}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-amber mt-1.5">{progressPct}% complete</p>
+                  </button>
 
-                {/* Phase 2 - Locked */}
-                <div className="card opacity-50 cursor-not-allowed relative group" title="Complete Phase 1 to unlock">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="badge bg-bg-elevated text-text-dim text-xs">Phase 2</span>
-                    <Lock size={13} className="text-text-dim" />
+                  {/* Phase 2 - Locked */}
+                  <div className="card opacity-50 cursor-not-allowed relative group" title="Complete Phase 1 to unlock">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="badge bg-bg-elevated text-text-dim text-xs">Phase 2</span>
+                      <Lock size={13} className="text-text-dim" />
+                    </div>
+                    <p className="text-sm font-semibold text-text-dim mb-1">Build</p>
+                    <p className="text-xs text-text-dim mb-3">Locked</p>
+                    <div className="w-full bg-bg-elevated rounded-full h-1.5" />
+                    <div className="absolute inset-0 rounded-xl hidden group-hover:flex items-center justify-center bg-bg-card/60 backdrop-blur-[1px]">
+                      <span className="text-xs text-text-dim bg-bg-elevated border border-border rounded-lg px-2.5 py-1.5">
+                        Complete Phase 1 to unlock
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-sm font-semibold text-text-dim mb-1">Build</p>
-                  <p className="text-xs text-text-dim mb-3">Locked</p>
-                  <div className="w-full bg-bg-elevated rounded-full h-1.5" />
-                  <div className="absolute inset-0 rounded-xl hidden group-hover:flex items-center justify-center bg-bg-card/60 backdrop-blur-[1px]">
-                    <span className="text-xs text-text-dim bg-bg-elevated border border-border rounded-lg px-2.5 py-1.5">
-                      Complete Phase 1 to unlock
-                    </span>
+
+                  {/* Phase 3 - Locked */}
+                  <div className="card opacity-50 cursor-not-allowed relative group" title="Complete Phase 1 to unlock">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="badge bg-bg-elevated text-text-dim text-xs">Phase 3</span>
+                      <Lock size={13} className="text-text-dim" />
+                    </div>
+                    <p className="text-sm font-semibold text-text-dim mb-1">Scale</p>
+                    <p className="text-xs text-text-dim mb-3">Locked</p>
+                    <div className="w-full bg-bg-elevated rounded-full h-1.5" />
+                    <div className="absolute inset-0 rounded-xl hidden group-hover:flex items-center justify-center bg-bg-card/60 backdrop-blur-[1px]">
+                      <span className="text-xs text-text-dim bg-bg-elevated border border-border rounded-lg px-2.5 py-1.5">
+                        Complete Phase 2 to unlock
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Phase 3 - Locked */}
-                <div className="card opacity-50 cursor-not-allowed relative group" title="Complete Phase 1 to unlock">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="badge bg-bg-elevated text-text-dim text-xs">Phase 3</span>
-                    <Lock size={13} className="text-text-dim" />
+                {/* Progress Ring Card */}
+                <button
+                  onClick={() => navigate('/onboarding')}
+                  className="card flex flex-col items-center justify-center hover:border-amber/40 transition-colors min-w-[140px]"
+                >
+                  <svg width="120" height="120" viewBox="0 0 120 120">
+                    <circle
+                      cx="60" cy="60" r={svgRadius}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      className="text-bg-elevated"
+                    />
+                    <circle
+                      cx="60" cy="60" r={svgRadius}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      strokeDasharray={`${svgDash} ${svgCircumference}`}
+                      strokeDashoffset="0"
+                      transform="rotate(-90 60 60)"
+                      className="text-amber transition-all duration-700"
+                    />
+                    <text x="60" y="55" textAnchor="middle" className="fill-text" style={{ fontSize: '18px', fontWeight: 700, fill: '#1A1A1A' }}>
+                      {progressPct}%
+                    </text>
+                    <text x="60" y="72" textAnchor="middle" style={{ fontSize: '9px', fill: '#6B6B6B' }}>
+                      Phase 1
+                    </text>
+                  </svg>
+                  <p className="text-xs text-text-muted mt-1">{doneCount} of {TOTAL_TASKS} tasks</p>
+                </button>
+              </div>
+            )}
+
+            {/* ── Company Home top section (when isCompanyHome) ── */}
+            {isCompanyHome && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Venture Health Score widget */}
+                <div className="card lg:col-span-1 flex flex-col items-center justify-center py-6 gap-2 text-center">
+                  <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-1">Venture Health</p>
+                  <div className="text-5xl font-bold text-amber leading-none">{healthScore}</div>
+                  <div className="text-xs text-text-muted">out of 100</div>
+                  <div className="w-full bg-bg-elevated rounded-full h-1.5 mt-3">
+                    <div className="bg-amber h-1.5 rounded-full transition-all" style={{ width: `${healthScore}%` }} />
                   </div>
-                  <p className="text-sm font-semibold text-text-dim mb-1">Scale</p>
-                  <p className="text-xs text-text-dim mb-3">Locked</p>
-                  <div className="w-full bg-bg-elevated rounded-full h-1.5" />
-                  <div className="absolute inset-0 rounded-xl hidden group-hover:flex items-center justify-center bg-bg-card/60 backdrop-blur-[1px]">
-                    <span className="text-xs text-text-dim bg-bg-elevated border border-border rounded-lg px-2.5 py-1.5">
-                      Complete Phase 2 to unlock
-                    </span>
+                  <p className="text-xs text-text-dim">Tasks · Milestones · KPIs · Pulse</p>
+                </div>
+
+                {/* Pulse Check summary */}
+                <div className="card lg:col-span-1">
+                  <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-3">Latest Pulse</p>
+                  {pulseCheck ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{MOODS_MAP[pulseCheck.mood]?.emoji}</span>
+                        <span className="text-sm font-medium text-text">{MOODS_MAP[pulseCheck.mood]?.label}</span>
+                      </div>
+                      {pulseCheck.forward && (
+                        <p className="text-xs text-text-muted leading-relaxed">
+                          <span className="font-medium text-text">Forward: </span>{pulseCheck.forward}
+                        </p>
+                      )}
+                      <p className="text-xs text-text-dim">{pulseCheck.submittedAt}</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm text-text-muted">No pulse submitted yet this week.</p>
+                      <button onClick={() => navigate('/kpi-dashboard')} className="btn-primary text-xs w-fit">Submit Pulse</button>
+                    </div>
+                  )}
+                </div>
+
+                {/* KPI Snapshot */}
+                <div className="card lg:col-span-1">
+                  <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-3">KPI Snapshot</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: 'MRR', value: kpiData?.mrr || '—', color: 'text-pulse-green' },
+                      { label: 'Burn', value: kpiData?.burnRate || '—', color: 'text-pulse-red' },
+                      { label: 'Runway', value: kpiData?.runway || '—', color: 'text-pulse-blue' },
+                      { label: 'Team', value: kpiData?.teamSize || '—', color: 'text-text' },
+                    ].map(item => (
+                      <div key={item.label} className="bg-bg-elevated rounded-lg px-3 py-2">
+                        <div className={`text-base font-bold ${item.color}`}>{item.value}</div>
+                        <div className="text-[10px] text-text-dim">{item.label}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Progress Ring Card */}
-              <button
-                onClick={() => navigate('/onboarding')}
-                className="card flex flex-col items-center justify-center hover:border-amber/40 transition-colors min-w-[140px]"
-              >
-                <svg width="120" height="120" viewBox="0 0 120 120">
-                  <circle
-                    cx="60" cy="60" r={svgRadius}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    className="text-bg-elevated"
-                  />
-                  <circle
-                    cx="60" cy="60" r={svgRadius}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeDasharray={`${svgDash} ${svgCircumference}`}
-                    strokeDashoffset="0"
-                    transform="rotate(-90 60 60)"
-                    className="text-amber transition-all duration-700"
-                  />
-                  <text x="60" y="55" textAnchor="middle" className="fill-text" style={{ fontSize: '18px', fontWeight: 700, fill: '#1A1A1A' }}>
-                    {progressPct}%
-                  </text>
-                  <text x="60" y="72" textAnchor="middle" style={{ fontSize: '9px', fill: '#6B6B6B' }}>
-                    Phase 1
-                  </text>
-                </svg>
-                <p className="text-xs text-text-muted mt-1">{doneCount} of {TOTAL_TASKS} tasks</p>
-              </button>
-            </div>
+            {/* ── What to Focus on This Week (when isCompanyHome) ── */}
+            {isCompanyHome && (
+              <div className="card">
+                <h3 className="text-sm font-semibold text-text mb-3">What to Focus on This Week</h3>
+                <div className="space-y-2">
+                  {overdueTasks.slice(0, 3).map((task, i) => (
+                    <div key={task.id} className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
+                      <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text truncate">{task.title}</p>
+                        <p className="text-xs text-text-dim">{task.category} · Due {task.dueDate}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {overdueTasks.length === 0 && (
+                    <p className="text-sm text-text-muted text-center py-4">All tasks are on track. Great work!</p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* ── Quick Access Tiles ── */}
             <div>
@@ -278,80 +377,82 @@ export default function Home() {
                   <div className="w-10 h-10 rounded-xl bg-pulse-green/10 flex items-center justify-center group-hover:bg-pulse-green/15 transition-colors">
                     <Calendar size={20} className="text-pulse-green" />
                   </div>
-                  <span className="text-sm font-medium text-text-muted group-hover:text-text transition-colors">Book a Meeting</span>
+                  <span className="text-sm font-medium text-text-muted group-hover:text-text transition-colors">Office Hours</span>
                 </button>
 
                 <Link
-                  to="/studio-chat"
+                  to="/studio-board"
                   className="card hover:border-amber/40 flex flex-col items-center justify-center gap-2.5 py-5 transition-colors group no-underline"
                 >
                   <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center group-hover:bg-amber/10 transition-colors">
                     <MessageSquare size={20} className="text-text-muted group-hover:text-amber transition-colors" />
                   </div>
-                  <span className="text-sm font-medium text-text-muted group-hover:text-text transition-colors">Studio Chat</span>
+                  <span className="text-sm font-medium text-text-muted group-hover:text-text transition-colors">Studio Board</span>
                 </Link>
               </div>
             </div>
 
-            {/* ── Upcoming Tasks ── */}
-            <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-text">Upcoming Tasks</h3>
-                <Link to="/onboarding" className="text-xs text-amber hover:text-amber/80 transition-colors flex items-center gap-1">
-                  View all <ChevronRight size={12} />
-                </Link>
-              </div>
-              <div className="space-y-1">
-                {PHASE1_TASKS.map(task => {
-                  const status = taskStatuses[task.id] || 'not-started'
-                  const isDone = status === 'done'
-                  const isOverdue = status === 'overdue'
-                  const isInProgress = status === 'in-progress'
+            {/* ── Upcoming Tasks (only when not company home) ── */}
+            {!isCompanyHome && (
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-text">Upcoming Tasks</h3>
+                  <Link to="/onboarding" className="text-xs text-amber hover:text-amber/80 transition-colors flex items-center gap-1">
+                    View all <ChevronRight size={12} />
+                  </Link>
+                </div>
+                <div className="space-y-1">
+                  {PHASE1_TASKS.map(task => {
+                    const status = taskStatuses[task.id] || 'not-started'
+                    const isDone = status === 'done'
+                    const isOverdue = status === 'overdue'
+                    const isInProgress = status === 'in-progress'
 
-                  return (
-                    <button
-                      key={task.id}
-                      onClick={() => setSelectedTask(task)}
-                      className={`
-                        w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors group
-                        ${isOverdue
-                          ? 'hover:bg-pulse-red/5 border-l-2 border-pulse-red pl-2.5'
-                          : 'hover:bg-bg-elevated'
-                        }
-                      `}
-                    >
-                      <StatusIcon status={status} size={15} />
+                    return (
+                      <button
+                        key={task.id}
+                        onClick={() => setSelectedTask(task)}
+                        className={`
+                          w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors group
+                          ${isOverdue
+                            ? 'hover:bg-pulse-red/5 border-l-2 border-pulse-red pl-2.5'
+                            : 'hover:bg-bg-elevated'
+                          }
+                        `}
+                      >
+                        <StatusIcon status={status} size={15} />
 
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-text-dim' : isOverdue ? 'text-pulse-red' : 'text-text'}`}>
-                          {task.title}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                          <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
-                            {task.category}
-                          </span>
-                          {isOverdue ? (
-                            <span className="badge bg-pulse-red/10 text-pulse-red">
-                              {task.overdueDays}d overdue
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium truncate ${isDone ? 'line-through text-text-dim' : isOverdue ? 'text-pulse-red' : 'text-text'}`}>
+                            {task.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            <span className={`badge ${CATEGORY_TAG[task.category] || 'bg-bg-elevated text-text-dim'}`}>
+                              {task.category}
                             </span>
-                          ) : (
-                            <span className="text-xs text-text-dim flex items-center gap-1">
-                              <Clock size={10} />
-                              {task.dueDate}
-                            </span>
-                          )}
-                          {isInProgress && (
-                            <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>
-                          )}
+                            {isOverdue ? (
+                              <span className="badge bg-pulse-red/10 text-pulse-red">
+                                {task.overdueDays}d overdue
+                              </span>
+                            ) : (
+                              <span className="text-xs text-text-dim flex items-center gap-1">
+                                <Clock size={10} />
+                                {task.dueDate}
+                              </span>
+                            )}
+                            {isInProgress && (
+                              <span className="badge bg-pulse-blue/10 text-pulse-blue">In Progress</span>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      <ChevronRight size={14} className="text-text-dim opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-                    </button>
-                  )
-                })}
+                        <ChevronRight size={14} className="text-text-dim opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ── Upcoming Milestone ── */}
             <button
@@ -402,7 +503,7 @@ export default function Home() {
                           className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-bg-elevated border border-border text-xs text-text-muted hover:border-amber/40 hover:text-text transition-colors"
                         >
                           <Calendar size={11} />
-                          Book
+                          Office Hours
                         </button>
                         <button
                           onClick={() => handleMessageMember(member)}
