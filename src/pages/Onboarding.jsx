@@ -104,7 +104,7 @@ function TaskRow({ task, onOpen }) {
           <div className="flex items-center gap-2 mt-1.5">
             <div className="flex-1 max-w-[120px] bg-bg-elevated rounded-full h-1.5">
               <div
-                className={`h-1.5 rounded-full transition-all ${sharedPct === 100 ? 'bg-pulse-green' : 'bg-amber'}`}
+                className={`h-1.5 rounded-full transition-all ${'bg-amber'}`}
                 style={{ width: `${sharedPct}%` }}
               />
             </div>

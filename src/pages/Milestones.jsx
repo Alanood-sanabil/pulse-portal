@@ -280,7 +280,7 @@ export default function Milestones() {
                     {milestone.status === 'achieved' && (
                       <div className="flex items-center gap-2 ml-8 mb-3 -mt-2 px-3 py-1.5 bg-pulse-green/5 border border-pulse-green/15 rounded-lg w-fit">
                         <div className="w-5 h-5 rounded-full bg-amber/20 border border-amber/30 flex items-center justify-center text-[10px] font-bold text-amber shrink-0">SR</div>
-                        <p className="text-xs text-text-muted">Sarah Al-Rashid congratulated you on this milestone 🎉</p>
+                        <p className="text-xs text-text-muted">Sarah Al-Rashid congratulated you on this milestone</p>
                       </div>
                     )}
                   </div>

@@ -1,6 +1,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ExternalLink, Download, Eye, Gift, Search } from 'lucide-react'
+import {
+  ExternalLink, Download, Eye, Gift, Search,
+  Scale, DollarSign, UserSearch, Palette, Server, LineChart, Megaphone, TrendingUp,
+} from 'lucide-react'
+
+const SERVICE_ICON_MAP = { Scale, DollarSign, UserSearch, Palette, Server, LineChart, Megaphone, TrendingUp }
+
+function ServiceIcon({ name, size = 26, className = 'text-amber' }) {
+  const Icon = SERVICE_ICON_MAP[name]
+  if (!Icon) return null
+  return <Icon size={size} className={className} />
+}
 import Layout from '../components/Layout'
 import SidePanel from '../components/SidePanel'
 import Modal from '../components/Modal'
@@ -43,7 +54,7 @@ function ServiceArticle({ service, onRequestService }) {
   return (
     <div className="px-6 py-6 space-y-6">
       <div className="space-y-1">
-        <div className="text-3xl">{service.icon}</div>
+        <ServiceIcon name={service.icon} size={28} />
         <h3 className="text-lg font-semibold text-text mt-2">{service.name}</h3>
         <p className="text-sm text-text-muted">{service.description}</p>
       </div>
@@ -110,7 +121,9 @@ function StudioServicesTab() {
             onClick={() => setActiveService(service)}
             className="bg-bg-card border border-border rounded-xl p-5 text-left hover:border-amber/40 hover:bg-bg-elevated transition-all group"
           >
-            <div className="text-3xl mb-3">{service.icon}</div>
+            <div className="w-10 h-10 rounded-xl bg-amber/10 flex items-center justify-center mb-3 group-hover:bg-amber/20 transition-colors">
+              <ServiceIcon name={service.icon} size={20} />
+            </div>
             <h3 className="text-sm font-semibold text-text mb-1 group-hover:text-amber transition-colors">
               {service.name}
             </h3>

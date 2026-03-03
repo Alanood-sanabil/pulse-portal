@@ -345,7 +345,7 @@ export const notifications = [
 
 export const studioServices = [
   {
-    id: 'ss-1', name: 'Legal & Compliance', icon: '⚖️', description: 'Entity formation, contract review, regulatory guidance for KSA market.',
+    id: 'ss-1', name: 'Legal & Compliance', icon: 'Scale', description: 'Entity formation, contract review, regulatory guidance for KSA market.',
     sla: '3–5 business days', contact: 'Khaled Al-Otaibi, Legal Counsel', category: 'Legal',
     article: `SSU Legal provides end-to-end legal support for all Sanabil Studio portfolio ventures. Our team handles everything from commercial registration (CR) and Memorandum of Association (AoA) drafting to shareholder agreements, employment contracts, and MISA fast-track filings. All legal work is done in-house by our Saudi-qualified counsel team with deep experience in the KSA Companies Law (2022 edition) and the new Foreign Investment Law amendments.
 
@@ -360,7 +360,7 @@ All engagement starts with a kick-off session within 3 business days of your req
     ],
   },
   {
-    id: 'ss-2', name: 'Finance & Accounting', icon: '💰', description: 'Financial modeling, accounting setup, audit prep, and tax compliance.',
+    id: 'ss-2', name: 'Finance & Accounting', icon: 'DollarSign', description: 'Financial modeling, accounting setup, audit prep, and tax compliance.',
     sla: '2–3 business days', contact: 'Nora Faisal, Finance Lead', category: 'Finance',
     article: `SSU Finance provides comprehensive financial support from Day 1. Our team helps you set up your chart of accounts, configure Qoyod (our recommended accounting platform, available at 50% off via the Partner Perks tab), and establish monthly reporting cadences that align with IFRS standards. We prepare board-ready financials every quarter and can support ZATCA e-invoicing compliance, which is mandatory for all Saudi companies.
 
@@ -374,7 +374,7 @@ Our finance team also manages the relationship with your external auditor (requi
     ],
   },
   {
-    id: 'ss-3', name: 'Talent & Recruiting', icon: '👥', description: 'Hiring support, job descriptions, candidate sourcing, and HR setup.',
+    id: 'ss-3', name: 'Talent & Recruiting', icon: 'UserSearch', description: 'Hiring support, job descriptions, candidate sourcing, and HR setup.',
     sla: '5–7 business days', contact: 'Rayan Al-Ghamdi, Talent Partner', category: 'Talent',
     article: `The SSU Talent team helps portfolio ventures build their founding teams and early hires. We support job description writing, posting on premium job boards (LinkedIn, Bayt, Wellfound), candidate screening, and interview coordination. For senior hires (CTO, CFO, Head of Sales), we run structured executive search processes with a shortlist typically ready within 3 weeks of kick-off.
 
@@ -388,7 +388,7 @@ Rayan Al-Ghamdi leads talent for all Sanabil ventures and will be your primary p
     ],
   },
   {
-    id: 'ss-4', name: 'Product Design', icon: '🎨', description: 'UI/UX design, brand identity, user research, and design systems.',
+    id: 'ss-4', name: 'Product Design', icon: 'Palette', description: 'UI/UX design, brand identity, user research, and design systems.',
     sla: '3–5 business days', contact: 'Layla Mahmoud, Product Manager', category: 'Operations',
     article: `SSU Product Design supports ventures with world-class design across product, brand, and marketing. Our design team uses Figma as the primary tool and delivers work in structured 2-week sprints aligned with your development cycles. We can take a concept from user research brief to final hi-fidelity prototype — ready for developer handoff — within 4–6 weeks depending on scope.
 
@@ -402,7 +402,7 @@ Layla Mahmoud leads product design engagements and has shipped products used by 
     ],
   },
   {
-    id: 'ss-5', name: 'Tech Infrastructure', icon: '🔧', description: 'Cloud setup, DevOps, security review, and architecture guidance.',
+    id: 'ss-5', name: 'Tech Infrastructure', icon: 'Server', description: 'Cloud setup, DevOps, security review, and architecture guidance.',
     sla: '2–4 business days', contact: 'Omar Hassan, Venture Architect', category: 'Operations',
     article: `Omar Hassan provides technical architecture guidance and infrastructure setup for all portfolio ventures. For fintech ventures like Tradepay, this includes secure cloud architecture design on AWS (Bahrain region, me-south-1), DevSecOps pipeline setup using GitHub Actions, containerization with Docker and ECS, and PCI-DSS compliance scoping for payment processing environments.
 
@@ -417,7 +417,7 @@ Omar has built infrastructure for 8 Sanabil portfolio companies and can activate
     ],
   },
   {
-    id: 'ss-6', name: 'Market Research', icon: '📊', description: 'Market sizing, competitive intelligence, and customer discovery support.',
+    id: 'ss-6', name: 'Market Research', icon: 'LineChart', description: 'Market sizing, competitive intelligence, and customer discovery support.',
     sla: '5–7 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
     article: `The SSU research team provides market intelligence to help you make data-driven product and go-to-market decisions. We have access to premium databases including SCAICT reports, Euromonitor, PitchBook GCC deal flow data, and SAMA's financial sector publications. Custom research requests are turned around in 5–7 business days with a structured output document ready to embed in your investor deck or board materials.
 
@@ -431,7 +431,7 @@ We also run competitive intelligence briefs on request — mapping direct and in
     ],
   },
   {
-    id: 'ss-7', name: 'PR & Communications', icon: '📣', description: 'Media relations, content strategy, thought leadership, and press releases.',
+    id: 'ss-7', name: 'PR & Communications', icon: 'Megaphone', description: 'Media relations, content strategy, thought leadership, and press releases.',
     sla: '7–10 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
     article: `SSU's communications team helps portfolio ventures build their brand presence in the Saudi and regional startup ecosystem. We have established relationships with key media outlets including Arab News, Saudi Gazette, Wamda, Magnitt, and Sifted, and can place well-crafted stories at the right time in your company's journey. For most ventures, this means securing first press at product launch and again at fundraising announcement.
 
@@ -445,7 +445,7 @@ For ongoing communications, we support monthly thought leadership content (Linke
     ],
   },
   {
-    id: 'ss-8', name: 'Investor Relations', icon: '🤝', description: 'Fundraising prep, investor introductions, pitch coaching, and data room setup.',
+    id: 'ss-8', name: 'Investor Relations', icon: 'TrendingUp', description: 'Fundraising prep, investor introductions, pitch coaching, and data room setup.',
     sla: '5–7 business days', contact: 'Sarah Al-Rashid, Portfolio Manager', category: 'Operations',
     article: `Sarah Al-Rashid leads investor relations support for all portfolio ventures. SSU has deep connections with 40+ active investors in the Saudi and GCC ecosystem, including family offices (Al-Faisaliah Group, Kingdom Holding), VCs (STV, Sanabil Investments, Outliers Venture Capital), and corporate venture arms (STC Ventures, Aramco Ventures). Introductions are made selectively based on fit — we do not blast your deck to a list.
 
@@ -915,7 +915,7 @@ export const chatMessages = {
     { id: 'cm-9', sender: 'Sarah Al-Rashid', initials: 'SA', role: 'Portfolio Manager', time: 'Today 08:45', text: 'Also — don\'t forget to submit your weekly update today. KPI data from the Nora is ready to pull in.' },
   ],
   'tradepay-ssu-legal': [
-    { id: 'cm-10', sender: 'Khaled Al-Otaibi', initials: 'KA', role: 'Legal Counsel', time: '2 days ago', text: 'Mustafa, CR is registered! 🎉 Certificate uploaded to your Document Library. Next steps: bank account opening and ZATCA VAT registration. I\'ve shared a checklist.' },
+    { id: 'cm-10', sender: 'Khaled Al-Otaibi', initials: 'KA', role: 'Legal Counsel', time: '2 days ago', text: 'Mustafa, CR is registered! Certificate uploaded to your Document Library. Next steps: bank account opening and ZATCA VAT registration. I\'ve shared a checklist.' },
     { id: 'cm-11', sender: 'Mustafa Al-Amin', initials: 'MA', role: 'CEO & Co-Founder', time: '2 days ago', text: 'Amazing! Thank you Khaled. Moving on the bank account today. One question — do I need both founders to be present for the Al-Rajhi appointment?' },
     { id: 'cm-12', sender: 'Khaled Al-Otaibi', initials: 'KA', role: 'Legal Counsel', time: '2 days ago', text: 'Yes, all shareholders with >25% ownership need to be present in person. Alternatively, I can prepare a Power of Attorney so you can go alone. Let me know.' },
     { id: 'cm-13', sender: 'Khaled Al-Otaibi', initials: 'KA', role: 'Legal Counsel', time: 'Yesterday', text: 'Also checking in on the IP Assignment Agreement — I need it signed by both founders before end of month. It\'s in your Document Library under Legal.' },

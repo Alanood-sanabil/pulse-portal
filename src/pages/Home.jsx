@@ -19,6 +19,7 @@ import {
   Building2,
   Users,
   PenLine,
+  AlertTriangle,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import TaskDetailPanel from '../components/TaskDetailPanel'
@@ -267,7 +268,7 @@ export default function Home() {
                 {/* Venture Health Score widget */}
                 <div className="card flex flex-col items-center justify-center py-6 gap-2 text-center">
                   <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-1">Venture Health</p>
-                  <div className="text-5xl font-bold text-amber leading-none">{healthScore}</div>
+                  <div className="text-5xl font-bold font-mono text-amber leading-none">{healthScore}</div>
                   <div className="text-xs text-text-muted">out of 100</div>
                   <div className="w-full bg-bg-elevated rounded-full h-1.5 mt-3">
                     <div className="bg-amber h-1.5 rounded-full transition-all" style={{ width: `${healthScore}%` }} />
@@ -286,7 +287,7 @@ export default function Home() {
                       { label: 'Team', value: kpiData?.teamSize || '—', color: 'text-text' },
                     ].map(item => (
                       <div key={item.label} className="bg-bg-elevated rounded-lg px-3 py-2">
-                        <div className={`text-base font-bold ${item.color}`}>{item.value}</div>
+                        <div className={`text-base font-bold font-mono ${item.color}`}>{item.value}</div>
                         <div className="text-[10px] text-text-dim">{item.label}</div>
                       </div>
                     ))}
@@ -415,7 +416,7 @@ export default function Home() {
                           {ownerType === 'shared' && (
                             <div className="flex items-center gap-2 mt-1">
                               <div className="flex-1 max-w-[100px] bg-bg-elevated rounded-full h-1.5">
-                                <div className={`h-1.5 rounded-full ${sharedPct === 100 ? 'bg-pulse-green' : 'bg-amber'}`} style={{ width: `${sharedPct}%` }} />
+                                <div className={`h-1.5 rounded-full ${'bg-amber'}`} style={{ width: `${sharedPct}%` }} />
                               </div>
                               <span className="text-xs text-text-dim">{sharedDone}/{sharedTotal} steps</span>
                             </div>

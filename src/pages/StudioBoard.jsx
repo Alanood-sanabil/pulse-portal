@@ -9,7 +9,7 @@ const MESSAGES = [
     role: 'Portfolio Manager',
     timestamp: 'Today at 10:32 AM',
     category: 'Office Hours',
-    text: "Hey founders 👋 Just a reminder that Office Hours this Thursday (Mar 5) are from 3–5 PM. You can book your slot directly through the portal. Topics I'm available for: fundraising prep, KPI reviews, go-to-market strategy, and anything that's on your mind. Looking forward to it — book early, slots fill fast.",
+    text: "Hey founders, just a reminder that Office Hours this Thursday (Mar 5) are from 3–5 PM. You can book your slot directly through the portal. Topics I'm available for: fundraising prep, KPI reviews, go-to-market strategy, and anything that's on your mind. Looking forward to it — book early, slots fill fast.",
   },
   {
     id: 'msg-2',
@@ -18,7 +18,7 @@ const MESSAGES = [
     role: 'Sanabil Studio',
     timestamp: 'Yesterday at 2:15 PM',
     category: 'New Perk',
-    text: '🎉 New partner perk just added! All Sanabil Studio portfolio companies now have access to AWS Activate — up to $100,000 in AWS credits, plus dedicated startup support and architecture reviews. Head to the Founder Toolkit → Partner Perks tab to claim your credits. Promo code is in the portal.',
+    text: 'New partner perk just added! All Sanabil Studio portfolio companies now have access to AWS Activate — up to $100,000 in AWS credits, plus dedicated startup support and architecture reviews. Head to the Founder Toolkit → Partner Perks tab to claim your credits. Promo code is in the portal.',
   },
   {
     id: 'msg-3',
@@ -27,7 +27,7 @@ const MESSAGES = [
     role: 'Legal Counsel, SSU',
     timestamp: 'Mar 3 at 11:00 AM',
     category: 'Event',
-    text: "📋 Friendly reminder that we're hosting a Legal Workshop for founders next Tuesday, March 10 at 10 AM. Topics: company governance in KSA, board meeting requirements under Companies Law, employment contract essentials for local and expat hires, and IP protection basics. Register by replying to this message or pinging me directly. Attendance strongly recommended for Phase 1 founders.",
+    text: "Friendly reminder that we're hosting a Legal Workshop for founders next Tuesday, March 10 at 10 AM. Topics: company governance in KSA, board meeting requirements under Companies Law, employment contract essentials for local and expat hires, and IP protection basics. Register by replying to this message or pinging me directly. Attendance strongly recommended for Phase 1 founders.",
   },
   {
     id: 'msg-4',
@@ -36,7 +36,7 @@ const MESSAGES = [
     role: 'Pulse Portal',
     timestamp: 'Mar 2 at 9:00 AM',
     category: 'Announcement',
-    text: "⚡ Portal Update v2.1 is live. New features this week: Studio Board (you're looking at it!), Founder Journey for your personal venture diary, Venture Growth replacing the Milestones tracker, and improved search and filters in the Playbook and Toolkit. As always, let us know if you find any issues or have feature requests.",
+    text: "Portal Update v2.1 is live. New features this week: Studio Board (you're looking at it!), Founder Journey for your personal venture diary, Venture Growth replacing the Milestones tracker, and improved search and filters in the Playbook and Toolkit. As always, let us know if you find any issues or have feature requests.",
   },
   {
     id: 'msg-5',
@@ -45,7 +45,7 @@ const MESSAGES = [
     role: 'Portfolio Manager',
     timestamp: 'Mar 1 at 4:45 PM',
     category: 'Important',
-    text: "📅 Quarterly Review Deadline Reminder — all founders need to complete their Q1 2026 review submission by March 31. This includes: updated KPI dashboard (MRR, burn, runway, team size), Venture Growth milestone updates, and a brief narrative on what's changed since your last board update. Reach out if you need a template or guidance — happy to do a prep call.",
+    text: "Quarterly Review Deadline Reminder — all founders need to complete their Q1 2026 review submission by March 31. This includes: updated KPI dashboard (MRR, burn, runway, team size), Venture Growth milestone updates, and a brief narrative on what's changed since your last board update. Reach out if you need a template or guidance — happy to do a prep call.",
   },
 ]
 

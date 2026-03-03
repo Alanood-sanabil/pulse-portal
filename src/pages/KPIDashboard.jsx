@@ -73,7 +73,7 @@ function KPICard({ config, value, updatedAt, onSave }) {
             </button>
           </div>
         ) : (
-          <p className="text-text font-bold text-2xl mt-1 leading-tight">
+          <p className="text-text font-bold font-mono text-2xl mt-1 leading-tight">
             {value || <span className="text-text-dim font-normal text-base">Not set</span>}
           </p>
         )}
@@ -127,7 +127,7 @@ export default function KPIDashboard() {
         {/* VENTURE HEALTH SCORE */}
         <div className="card p-6 flex items-center gap-6">
           <div className="shrink-0 text-center">
-            <div className="text-5xl font-bold text-amber leading-none">{healthScore}</div>
+            <div className="text-5xl font-bold font-mono text-amber leading-none">{healthScore}</div>
             <div className="text-xs text-text-muted mt-1">out of 100</div>
           </div>
           <div className="flex-1 border-l border-border pl-6">
