@@ -36,8 +36,6 @@ const initialState = {
   journeyWeekSubmitted: false,
   notificationCount: 5,
   notificationsRead: false,
-  weeklyUpdateSubmitted: false,
-  pulseCheck: null,
   toasts: [],
   selectedCategory: null,
   selectedChannel: 'tradepay-general',
@@ -206,10 +204,6 @@ function reducer(state, action) {
     }
     case 'MARK_ALL_NOTIFICATIONS_READ':
       return { ...state, notificationsRead: true, notificationCount: 0 }
-    case 'SET_WEEKLY_UPDATE_SUBMITTED':
-      return { ...state, weeklyUpdateSubmitted: true }
-    case 'SUBMIT_PULSE_CHECK':
-      return { ...state, pulseCheck: action.data, weeklyUpdateSubmitted: true }
     case 'ADD_TOAST':
       return { ...state, toasts: [...state.toasts, { id: Date.now(), message: action.message, type: action.toastType || 'default' }] }
     case 'REMOVE_TOAST':
@@ -221,7 +215,7 @@ function reducer(state, action) {
     case 'UPDATE_KPI':
       return { ...state, kpiData: { ...state.kpiData, [action.key]: action.value, [`${action.key}Updated`]: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) } }
     case 'ADD_WEEKLY_UPDATE':
-      return { ...state, weeklyUpdates: [action.update, ...state.weeklyUpdates], weeklyUpdateSubmitted: true }
+      return { ...state, weeklyUpdates: [action.update, ...state.weeklyUpdates] }
     case 'UPDATE_MILESTONE':
       return {
         ...state,
@@ -265,7 +259,6 @@ export function AppProvider({ children }) {
   const updateTaskStatus = useCallback((taskId, status) => dispatch({ type: 'UPDATE_TASK_STATUS', taskId, status }), [])
   const toggleSubTask = useCallback((subTaskId, done, taskId, siblingIds) => dispatch({ type: 'TOGGLE_SUBTASK', subTaskId, done, taskId, siblingIds }), [])
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
-  const setWeeklyUpdateSubmitted = useCallback(() => dispatch({ type: 'SET_WEEKLY_UPDATE_SUBMITTED' }), [])
   const addToast = useCallback((message, toastType = 'default') => {
     const id = Date.now()
     dispatch({ type: 'ADD_TOAST', message, toastType })
@@ -281,15 +274,13 @@ export function AppProvider({ children }) {
   const addJourneyEntry = useCallback((entry) => dispatch({ type: 'ADD_JOURNEY_ENTRY', entry }), [])
   const markSectionRead = useCallback((sectionId, chapterId, chapterSections) => dispatch({ type: 'MARK_SECTION_READ', sectionId, chapterId, chapterSections }), [])
   const addDocument = useCallback((category, doc) => dispatch({ type: 'ADD_DOCUMENT', category, doc }), [])
-  const submitPulseCheck = useCallback((data) => dispatch({ type: 'SUBMIT_PULSE_CHECK', data }), [])
 
   return (
     <AppContext.Provider value={{
       ...state,
       updateTaskStatus,
-    toggleSubTask,
+      toggleSubTask,
       markAllNotificationsRead,
-      setWeeklyUpdateSubmitted,
       addToast,
       removeToast,
       setSelectedCategory,
@@ -301,7 +292,6 @@ export function AppProvider({ children }) {
       addJourneyEntry,
       markSectionRead,
       addDocument,
-      submitPulseCheck,
     }}>
       {children}
     </AppContext.Provider>

@@ -36,7 +36,7 @@ const MESSAGES = [
     role: 'Pulse Portal',
     timestamp: 'Mar 2 at 9:00 AM',
     category: 'Announcement',
-    text: "⚡ Portal Update v2.1 is live. New features this week: Studio Board (you're looking at it!), Pulse Check on the KPI Dashboard replacing the old weekly update form, Venture Journey replacing the Milestones tracker, and improved search and filters in the Playbook and Toolkit. As always, let us know if you find any issues or have feature requests.",
+    text: "⚡ Portal Update v2.1 is live. New features this week: Studio Board (you're looking at it!), Founder Journey for your personal venture diary, Venture Growth replacing the Milestones tracker, and improved search and filters in the Playbook and Toolkit. As always, let us know if you find any issues or have feature requests.",
   },
   {
     id: 'msg-5',
@@ -45,7 +45,7 @@ const MESSAGES = [
     role: 'Portfolio Manager',
     timestamp: 'Mar 1 at 4:45 PM',
     category: 'Important',
-    text: "📅 Quarterly Review Deadline Reminder — all founders need to complete their Q1 2026 review submission by March 31. This includes: updated KPI dashboard (MRR, burn, runway, team size), Venture Journey status updates, a Pulse Check for the quarter, and a brief narrative on what's changed since your last board update. Reach out if you need a template or guidance — happy to do a prep call.",
+    text: "📅 Quarterly Review Deadline Reminder — all founders need to complete their Q1 2026 review submission by March 31. This includes: updated KPI dashboard (MRR, burn, runway, team size), Venture Growth milestone updates, and a brief narrative on what's changed since your last board update. Reach out if you need a template or guidance — happy to do a prep call.",
   },
 ]
 

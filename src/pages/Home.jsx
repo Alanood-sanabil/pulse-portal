@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import {
-  AlertTriangle,
   HelpCircle,
   FolderOpen,
   Calendar,
@@ -54,17 +53,9 @@ function ActivityIcon({ type }) {
 const TOTAL_TASKS = 11
 const PHASE1_TASKS = tasks.slice(0, 5)
 
-const MOODS_MAP = {
-  struggling: { emoji: '😰', label: 'Struggling' },
-  tough: { emoji: '😓', label: 'Tough week' },
-  steady: { emoji: '😐', label: 'Steady' },
-  good: { emoji: '🙂', label: 'Good progress' },
-  great: { emoji: '🚀', label: 'Great week' },
-}
-
 export default function Home() {
   const navigate = useNavigate()
-  const { taskStatuses, weeklyUpdateSubmitted, setSelectedChannel, pulseCheck, kpiData, milestones, subTaskStatuses, journeyWeekSubmitted } = useApp()
+  const { taskStatuses, setSelectedChannel, kpiData, milestones, subTaskStatuses, journeyWeekSubmitted } = useApp()
 
   const [selectedTask, setSelectedTask] = useState(null)
   const [showBooking, setShowBooking] = useState(false)
@@ -98,7 +89,7 @@ export default function Home() {
 
   const anyKpiUpdated = !!(kpiData?.mrrUpdated || kpiData?.burnRateUpdated)
   const taskScore = Math.round((doneCount / TOTAL_TASKS) * 100)
-  const healthScore = Math.min(100, Math.round(taskScore * 0.4 + 30 + (pulseCheck ? 15 : 0) + (anyKpiUpdated ? 20 : 0)))
+  const healthScore = Math.min(100, Math.round(taskScore * 0.5 + 40 + (anyKpiUpdated ? 20 : 0)))
 
   const upcomingMilestones = milestones ? milestones.filter(m => m.status !== 'achieved').slice(0, 3) : []
 
@@ -149,26 +140,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* ── Weekly Update Banner ── */}
-        {!weeklyUpdateSubmitted && (
-          <div className="flex items-center justify-between gap-4 bg-amber/10 border border-amber/25 rounded-xl px-5 py-4">
-            <div className="flex items-center gap-3">
-              <AlertTriangle size={18} className="text-amber shrink-0" />
-              <p className="text-sm text-amber font-medium">
-                Your Pulse Check is due.{' '}
-                <span className="font-normal text-amber/80">Submit your weekly pulse — takes 60 seconds.</span>
-              </p>
-            </div>
-            <button
-              onClick={() => navigate('/kpi-dashboard')}
-              className="btn-primary shrink-0 flex items-center gap-2 text-xs"
-            >
-              Submit Pulse
-              <ArrowRight size={13} />
-            </button>
-          </div>
-        )}
 
         {/* ── Founder Journey Banner ── */}
         {!journeyWeekSubmitted && (
@@ -292,44 +263,20 @@ export default function Home() {
 
             {/* ── Company Home top section (when isCompanyHome) ── */}
             {isCompanyHome && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Venture Health Score widget */}
-                <div className="card lg:col-span-1 flex flex-col items-center justify-center py-6 gap-2 text-center">
+                <div className="card flex flex-col items-center justify-center py-6 gap-2 text-center">
                   <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-1">Venture Health</p>
                   <div className="text-5xl font-bold text-amber leading-none">{healthScore}</div>
                   <div className="text-xs text-text-muted">out of 100</div>
                   <div className="w-full bg-bg-elevated rounded-full h-1.5 mt-3">
                     <div className="bg-amber h-1.5 rounded-full transition-all" style={{ width: `${healthScore}%` }} />
                   </div>
-                  <p className="text-xs text-text-dim">Tasks · Milestones · KPIs · Pulse</p>
-                </div>
-
-                {/* Pulse Check summary */}
-                <div className="card lg:col-span-1">
-                  <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-3">Latest Pulse</p>
-                  {pulseCheck ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{MOODS_MAP[pulseCheck.mood]?.emoji}</span>
-                        <span className="text-sm font-medium text-text">{MOODS_MAP[pulseCheck.mood]?.label}</span>
-                      </div>
-                      {pulseCheck.forward && (
-                        <p className="text-xs text-text-muted leading-relaxed">
-                          <span className="font-medium text-text">Forward: </span>{pulseCheck.forward}
-                        </p>
-                      )}
-                      <p className="text-xs text-text-dim">{pulseCheck.submittedAt}</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      <p className="text-sm text-text-muted">No pulse submitted yet this week.</p>
-                      <button onClick={() => navigate('/kpi-dashboard')} className="btn-primary text-xs w-fit">Submit Pulse</button>
-                    </div>
-                  )}
+                  <p className="text-xs text-text-dim">Tasks · Milestones · KPIs</p>
                 </div>
 
                 {/* KPI Snapshot */}
-                <div className="card lg:col-span-1">
+                <div className="card">
                   <p className="text-xs font-semibold text-text-dim uppercase tracking-wider mb-3">KPI Snapshot</p>
                   <div className="grid grid-cols-2 gap-3">
                     {[

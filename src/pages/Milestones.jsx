@@ -180,7 +180,7 @@ export default function Milestones() {
     : null
 
   return (
-    <Layout title="Venture Journey" subtitle="Track milestones and celebrate progress">
+    <Layout title="Venture Growth" subtitle="Track milestones and celebrate progress">
       <div className="p-6 max-w-3xl mx-auto">
 
         {/* Summary bar */}

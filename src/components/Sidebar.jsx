@@ -34,7 +34,7 @@ const navSections = [
     items: [
       { path: '/kpi-dashboard', label: 'KPI Dashboard', icon: BarChart2 },
       { path: '/founder-journey', label: 'Founder Journey', icon: PenLine },
-      { path: '/milestones', label: 'Venture Journey', icon: Flag },
+      { path: '/milestones', label: 'Venture Growth', icon: Flag },
       { path: '/document-library', label: 'Document Library', icon: FolderOpen },
       { path: '/notifications', label: 'Notifications', icon: Bell, badgeKey: 'notifications' },
     ],

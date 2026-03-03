@@ -1,16 +1,8 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, Clock, Users, CheckCircle, Pencil } from 'lucide-react'
+import { TrendingUp, TrendingDown, Clock, Users, Pencil } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import Layout from '../components/Layout'
 import { useApp } from '../context/AppContext'
-
-const MOODS = [
-  { value: 'struggling', emoji: '😰', label: 'Struggling' },
-  { value: 'tough', emoji: '😓', label: 'Tough week' },
-  { value: 'steady', emoji: '😐', label: 'Steady' },
-  { value: 'good', emoji: '🙂', label: 'Good progress' },
-  { value: 'great', emoji: '🚀', label: 'Great week' },
-]
 
 const KPI_CONFIG = [
   { key: 'mrr', updatedKey: 'mrrUpdated', label: 'MRR', icon: TrendingUp, colorIcon: 'text-pulse-green', colorBg: 'bg-pulse-green/10', placeholder: 'e.g. $42,000', target: '$25,000', trend: 'up' },
@@ -107,21 +99,13 @@ export default function KPIDashboard() {
   const {
     kpiData,
     updateKPI,
-    pulseCheck,
-    submitPulseCheck,
-    setWeeklyUpdateSubmitted,
     addToast,
   } = useApp()
-
-  // Pulse check form state
-  const [mood, setMood] = useState('')
-  const [forward, setForward] = useState('')
-  const [stuck, setStuck] = useState('')
 
   // Health score calculation
   const taskScore = 27
   const anyKpiUpdated = !!(kpiData.mrrUpdated || kpiData.burnRateUpdated)
-  const healthScore = Math.min(100, Math.round(taskScore * 0.4 + 30 + (pulseCheck ? 15 : 0) + (anyKpiUpdated ? 20 : 0)))
+  const healthScore = Math.min(100, Math.round(taskScore * 0.5 + 40 + (anyKpiUpdated ? 20 : 0)))
 
   // Chart data
   const chartData = [
@@ -136,15 +120,8 @@ export default function KPIDashboard() {
     addToast(`${KPI_CONFIG.find((k) => k.key === key)?.label} updated.`, 'success')
   }
 
-  function handleSubmitPulse() {
-    if (!mood) return
-    const now = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-    submitPulseCheck({ mood, forward: forward.trim(), stuck: stuck.trim(), submittedAt: now })
-    addToast('Pulse Check submitted!', 'success')
-  }
-
   return (
-    <Layout title="KPI Dashboard" subtitle="Venture health and weekly pulse">
+    <Layout title="KPI Dashboard" subtitle="Venture health and key metrics">
       <div className="p-6 space-y-6">
 
         {/* VENTURE HEALTH SCORE */}
@@ -161,7 +138,7 @@ export default function KPIDashboard() {
                 {healthScore >= 50 ? '+3 this week' : '-2 this week'}
               </span>
             </div>
-            <p className="text-xs text-text-muted leading-relaxed">Calculated from task completion, milestone progress, KPI update frequency, and Pulse Check consistency.</p>
+            <p className="text-xs text-text-muted leading-relaxed">Calculated from task completion, milestone progress, and KPI update frequency.</p>
             <div className="flex gap-4 mt-3">
               <div className="text-center">
                 <div className="text-sm font-semibold text-text">27%</div>
@@ -174,10 +151,6 @@ export default function KPIDashboard() {
               <div className="text-center">
                 <div className={`text-sm font-semibold ${anyKpiUpdated ? 'text-pulse-green' : 'text-text-dim'}`}>{anyKpiUpdated ? 'Updated' : 'Stale'}</div>
                 <div className="text-[10px] text-text-dim">KPIs</div>
-              </div>
-              <div className="text-center">
-                <div className={`text-sm font-semibold ${pulseCheck ? 'text-pulse-green' : 'text-text-dim'}`}>{pulseCheck ? 'Done' : 'Pending'}</div>
-                <div className="text-[10px] text-text-dim">Pulse</div>
               </div>
             </div>
           </div>
@@ -217,85 +190,6 @@ export default function KPIDashboard() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </section>
-
-        {/* WEEKLY PULSE CHECK */}
-        <section>
-          {pulseCheck === null || pulseCheck === undefined ? (
-            <div className="card p-6 space-y-5">
-              <div>
-                <h2 className="text-base font-semibold text-text">Weekly Pulse Check</h2>
-                <p className="text-text-muted text-sm mt-0.5">Takes 60 seconds. Just for you.</p>
-              </div>
-
-              <div>
-                <p className="text-xs font-medium text-text-muted mb-3 uppercase tracking-wide">How is the venture feeling this week?</p>
-                <div className="flex gap-2">
-                  {MOODS.map(m => (
-                    <button
-                      key={m.value}
-                      onClick={() => setMood(m.value)}
-                      className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border-2 transition-all ${mood === m.value ? 'border-amber bg-amber/5' : 'border-border hover:border-border-subtle'}`}
-                    >
-                      <span className="text-2xl">{m.emoji}</span>
-                      <span className="text-[10px] text-text-muted leading-tight text-center">{m.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-text-muted mb-1.5">What moved forward this week</label>
-                <textarea
-                  value={forward}
-                  onChange={e => setForward(e.target.value)}
-                  rows={2}
-                  className="input-field w-full resize-none text-sm"
-                  placeholder="Key wins, shipped features, conversations..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-text-muted mb-1.5">What is stuck or needs help</label>
-                <textarea
-                  value={stuck}
-                  onChange={e => setStuck(e.target.value)}
-                  rows={2}
-                  className="input-field w-full resize-none text-sm"
-                  placeholder="Blockers, risks, where you need studio support..."
-                />
-              </div>
-
-              <button
-                onClick={handleSubmitPulse}
-                disabled={!mood}
-                className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Submit Pulse
-              </button>
-            </div>
-          ) : (
-            <div className="card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-pulse-green/10 flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-pulse-green" />
-                </div>
-                <div>
-                  <p className="text-text font-semibold text-sm">Pulse submitted</p>
-                  <p className="text-text-dim text-xs">{pulseCheck.submittedAt}</p>
-                </div>
-              </div>
-              <div className="space-y-3 bg-bg-elevated rounded-xl p-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{MOODS.find(m => m.value === pulseCheck.mood)?.emoji}</span>
-                  <span className="text-sm font-medium text-text">{MOODS.find(m => m.value === pulseCheck.mood)?.label}</span>
-                </div>
-                {pulseCheck.forward && <p className="text-xs text-text-muted"><span className="font-medium text-text">Moved forward:</span> {pulseCheck.forward}</p>}
-                {pulseCheck.stuck && <p className="text-xs text-text-muted"><span className="font-medium text-text">Stuck on:</span> {pulseCheck.stuck}</p>}
-              </div>
-              <p className="text-xs text-text-dim mt-3 text-center">Thank you. Sarah will review your pulse before your next check-in.</p>
-            </div>
-          )}
         </section>
 
       </div>
