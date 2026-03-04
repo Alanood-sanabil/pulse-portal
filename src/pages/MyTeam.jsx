@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Scale, DollarSign, Users, Cpu, Layers, Target,
-  Mail, CalendarDays, MessageSquare, FileQuestion, ChevronRight, Search, Clock,
+  Mail, CalendarDays, MessageSquare, FileQuestion, Search, Clock,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import BookingModal from '../components/BookingModal'
@@ -35,14 +34,6 @@ const AVAILABILITY_CONFIG = {
   out: { label: 'Out of office', dotClass: 'bg-text-dim', textClass: 'text-text-dim' },
 }
 
-const WHO_HANDLES = [
-  { icon: Scale, label: 'Legal matters', description: 'Contracts, IP, compliance', action: 'request', category: 'Legal', path: '/request-help' },
-  { icon: DollarSign, label: 'Finance & accounting', description: 'Budgets, invoices, reporting', action: 'request', category: 'Finance', path: '/request-help' },
-  { icon: Users, label: 'Hiring & HR', description: 'Recruiting, people ops', action: 'request', category: 'Talent', path: '/request-help' },
-  { icon: Layers, label: 'Product & design', description: 'Frameworks, resources, tools', action: 'navigate', path: '/toolkit' },
-  { icon: Cpu, label: 'Tech & infrastructure', description: 'Cloud, devtools, security', action: 'navigate', path: '/toolkit' },
-  { icon: Target, label: 'Track milestones', description: 'Goals, deadlines, progress', action: 'navigate', path: '/milestones' },
-]
 
 function AvailabilityDot({ availability }) {
   const config = AVAILABILITY_CONFIG[availability] || AVAILABILITY_CONFIG.available
@@ -118,7 +109,7 @@ function MemberCard({ member, index, onBook, onMessage, onRequest, onViewHistory
 
 export default function MyTeam() {
   const navigate = useNavigate()
-  const { setSelectedChannel, setSelectedCategory } = useApp()
+  const { setSelectedCategory } = useApp()
   const [bookingPerson, setBookingPerson] = useState(null)
   const [historyMember, setHistoryMember] = useState(null)
   const [searchQ, setSearchQ] = useState('')
@@ -132,9 +123,10 @@ export default function MyTeam() {
     : null
   function isVisible(id) { return !filteredIds || filteredIds.has(id) }
 
-  function handleMessage(member) { setSelectedChannel(member.channel); navigate('/studio-board') }
+  function handleMessage(member) {
+    window.open(`https://slack.com/app_redirect?channel=${member.slackHandle}`, '_blank')
+  }
   function handleRequest(member) { setSelectedCategory(member.category); navigate('/request-help') }
-  function handleWhoHandles(item) { if (item.action === 'request' && item.category) setSelectedCategory(item.category); navigate(item.path) }
 
   return (
     <Layout title="My Team" subtitle="Your Studio Support Team and SSU contacts">
@@ -168,30 +160,6 @@ export default function MyTeam() {
           </div>
         </section>
 
-        {/* Who Handles What */}
-        <section>
-          <h2 className="text-base font-semibold text-text mb-4">Who Handles What</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {WHO_HANDLES.map(item => {
-              const Icon = item.icon
-              return (
-                <button key={item.label} onClick={() => handleWhoHandles(item)} className="card p-4 text-left group hover:border-amber/40 transition-colors flex flex-col gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-amber/10 flex items-center justify-center shrink-0 group-hover:bg-amber/20 transition-colors">
-                    <Icon className="w-4 h-4 text-amber" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-text text-sm font-medium leading-snug">{item.label}</p>
-                    <p className="text-text-dim text-xs mt-0.5 leading-snug">{item.description}</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-amber text-xs font-medium">
-                    <span>Go</span>
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </section>
       </div>
 
       {/* Interaction History Panel */}

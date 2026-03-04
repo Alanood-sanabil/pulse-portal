@@ -10,15 +10,15 @@ export const venture = {
 }
 
 export const teamMembers = [
-  { id: 'tm-1', name: 'Sarah Al-Rashid', role: 'Portfolio Manager', initials: 'SA', email: 'sarah@sanabilstudio.com', bio: 'Leads portfolio strategy and founder support. Former VC at STV with focus on fintech and SaaS.', channel: 'tradepay-pm-sarah' },
-  { id: 'tm-2', name: 'Omar Hassan', role: 'Venture Architect', initials: 'OH', email: 'omar@sanabilstudio.com', bio: 'Product and technical strategy advisor. Previously built two fintech startups from 0→1.', channel: 'tradepay-general' },
-  { id: 'tm-3', name: 'Layla Mahmoud', role: 'Product Manager', initials: 'LM', email: 'layla@sanabilstudio.com', bio: 'Embedded product support for Tradepay. Focus on roadmap, user research, and go-to-market.', channel: 'tradepay-general' },
+  { id: 'tm-1', name: 'Sarah Al-Rashid', role: 'Portfolio Manager', initials: 'SA', email: 'sarah@sanabilstudio.com', bio: 'Leads portfolio strategy and founder support. Former VC at STV with focus on fintech and SaaS.', channel: 'tradepay-pm-sarah', slackHandle: 'sarah.alrashid' },
+  { id: 'tm-2', name: 'Omar Hassan', role: 'Venture Architect', initials: 'OH', email: 'omar@sanabilstudio.com', bio: 'Product and technical strategy advisor. Previously built two fintech startups from 0→1.', channel: 'tradepay-general', slackHandle: 'omar.hassan' },
+  { id: 'tm-3', name: 'Layla Mahmoud', role: 'Product Manager', initials: 'LM', email: 'layla@sanabilstudio.com', bio: 'Embedded product support for Tradepay. Focus on roadmap, user research, and go-to-market.', channel: 'tradepay-general', slackHandle: 'layla.mahmoud' },
 ]
 
 export const ssuTeam = [
-  { id: 'ssu-1', name: 'Khaled Al-Otaibi', role: 'Legal Counsel', initials: 'KA', email: 'legal@sanabilstudio.com', category: 'Legal', channel: 'tradepay-ssu-legal' },
-  { id: 'ssu-2', name: 'Nora Faisal', role: 'Finance Lead', initials: 'NF', email: 'finance@sanabilstudio.com', category: 'Finance', channel: 'tradepay-ssu-finance' },
-  { id: 'ssu-3', name: 'Rayan Al-Ghamdi', role: 'Talent Partner', initials: 'RA', email: 'talent@sanabilstudio.com', category: 'Talent', channel: 'tradepay-ssu-talent' },
+  { id: 'ssu-1', name: 'Nora Khalid', role: 'Legal Counsel', initials: 'NK', email: 'legal@sanabilstudio.com', category: 'Legal', channel: 'tradepay-ssu-legal', slackHandle: 'nora.khalid' },
+  { id: 'ssu-2', name: 'Ahmed Saleh', role: 'Finance Lead', initials: 'AS', email: 'finance@sanabilstudio.com', category: 'Finance', channel: 'tradepay-ssu-finance', slackHandle: 'ahmed.saleh' },
+  { id: 'ssu-3', name: 'Rania Faisal', role: 'Talent Partner', initials: 'RF', email: 'talent@sanabilstudio.com', category: 'Talent', channel: 'tradepay-ssu-talent', slackHandle: 'rania.faisal' },
 ]
 
 export const tasks = [

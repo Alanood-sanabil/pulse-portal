@@ -21,6 +21,10 @@ import {
   Users,
   PenLine,
   AlertTriangle,
+  GripVertical,
+  X,
+  Plus,
+  Pencil,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import TaskDetailPanel from '../components/TaskDetailPanel'
@@ -82,11 +86,58 @@ const PHASE1_TASKS = tasks.slice(0, 5)
 
 export default function Home() {
   const navigate = useNavigate()
-  const { taskStatuses, setSelectedChannel, kpiData, milestones, subTaskStatuses, journeyWeekSubmitted } = useApp()
+  const { taskStatuses, kpiData, milestones, subTaskStatuses, journeyWeekSubmitted } = useApp()
 
   const [selectedTask, setSelectedTask] = useState(null)
   const [showBooking, setShowBooking] = useState(false)
   const [bookingPerson, setBookingPerson] = useState(null)
+
+  const [focusItems, setFocusItems] = useState([
+    { id: '1', text: 'Complete banking setup with Al Rajhi' },
+    { id: '2', text: 'Review and sign employment contracts' },
+    { id: '3', text: 'Write your weekly Journey entry' },
+  ])
+  const [focusEditMode, setFocusEditMode] = useState(false)
+  const [draftItems, setDraftItems] = useState([])
+  const [dragIndex, setDragIndex] = useState(null)
+  const [dragOverIndex, setDragOverIndex] = useState(null)
+
+  function enterFocusEdit() {
+    setDraftItems(focusItems.map(item => ({ ...item })))
+    setFocusEditMode(true)
+  }
+  function saveFocus() {
+    setFocusItems(draftItems.filter(item => item.text.trim()))
+    setFocusEditMode(false)
+    setDragIndex(null)
+    setDragOverIndex(null)
+  }
+  function cancelFocus() {
+    setFocusEditMode(false)
+    setDragIndex(null)
+    setDragOverIndex(null)
+  }
+  function updateDraftItem(id, text) {
+    setDraftItems(prev => prev.map(item => item.id === id ? { ...item, text } : item))
+  }
+  function deleteDraftItem(id) {
+    setDraftItems(prev => prev.filter(item => item.id !== id))
+  }
+  function addDraftItem() {
+    setDraftItems(prev => [...prev, { id: String(Date.now()), text: '' }])
+  }
+  function handleDragStart(index) { setDragIndex(index) }
+  function handleDragOver(e, index) { e.preventDefault(); setDragOverIndex(index) }
+  function handleDrop(index) {
+    if (dragIndex === null || dragIndex === index) return
+    const reordered = [...draftItems]
+    const [moved] = reordered.splice(dragIndex, 1)
+    reordered.splice(index, 0, moved)
+    setDraftItems(reordered)
+    setDragIndex(null)
+    setDragOverIndex(null)
+  }
+  function handleDragEnd() { setDragIndex(null); setDragOverIndex(null) }
 
   const doneCount = useMemo(
     () => tasks.filter(t => taskStatuses[t.id] === 'done').length,
@@ -104,8 +155,7 @@ export default function Home() {
   }
 
   function handleMessageMember(member) {
-    setSelectedChannel(member.channel)
-    navigate('/studio-chat')
+    window.open(`https://slack.com/app_redirect?channel=${member.slackHandle}`, '_blank')
   }
 
   const svgRadius = 54
@@ -192,31 +242,95 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── What to Focus on Today (always visible) ── */}
+        {/* ── What to Focus on Today ── */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-text mb-3">What to Focus on Today</h3>
-          {overdueTasks.length === 0 && upcomingMilestones.length === 0 && journeyWeekSubmitted ? (
-            <p className="text-sm text-text-muted py-2">All caught up — no urgent actions today.</p>
-          ) : (
-            <div className="space-y-2">
-              {overdueTasks.slice(0, 2).map((task, i) => (
-                <div key={task.id} className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
-                  <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-text truncate">{task.title}</p>
-                    <p className="text-xs text-text-dim">{task.category} · Due {task.dueDate}</p>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-text">What to Focus on Today</h3>
+              <p className="text-xs text-text-dim mt-0.5">Your priorities for today — edit anytime</p>
+            </div>
+            {!focusEditMode ? (
+              <button
+                onClick={enterFocusEdit}
+                className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated shrink-0"
+              >
+                <Pencil size={12} />
+                Edit
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={cancelFocus}
+                  className="text-xs text-text-muted hover:text-text transition-colors px-2.5 py-1.5 rounded-lg hover:bg-bg-elevated"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveFocus}
+                  className="text-xs font-semibold text-white px-3 py-1.5 rounded-lg transition-colors"
+                  style={{ background: '#D97706' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#B45309' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#D97706' }}
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
+
+          {!focusEditMode ? (
+            <div className="space-y-1.5">
+              {focusItems.length === 0 ? (
+                <p className="text-sm text-text-dim py-1">No priorities set — click Edit to add some.</p>
+              ) : (
+                focusItems.map((item, i) => (
+                  <div key={item.id} className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
+                    <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                    <p className="text-sm text-text flex-1">{item.text}</p>
                   </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              {draftItems.map((item, i) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={() => handleDragStart(i)}
+                  onDragOver={e => handleDragOver(e, i)}
+                  onDrop={() => handleDrop(i)}
+                  onDragEnd={handleDragEnd}
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border transition-all ${
+                    dragOverIndex === i && dragIndex !== i
+                      ? 'border-amber/50 bg-amber/5'
+                      : 'border-transparent bg-bg-elevated'
+                  } ${dragIndex === i ? 'opacity-40' : 'opacity-100'}`}
+                >
+                  <GripVertical size={14} className="text-text-dim shrink-0 cursor-grab active:cursor-grabbing" />
+                  <input
+                    type="text"
+                    value={item.text}
+                    onChange={e => updateDraftItem(item.id, e.target.value)}
+                    placeholder="What do you need to focus on?"
+                    autoFocus={i === draftItems.length - 1 && item.text === ''}
+                    className="flex-1 text-sm text-text bg-transparent outline-none placeholder:text-text-dim min-w-0"
+                  />
+                  <button
+                    onClick={() => deleteDraftItem(item.id)}
+                    className="p-0.5 rounded text-text-dim hover:text-pulse-red transition-colors shrink-0"
+                  >
+                    <X size={13} />
+                  </button>
                 </div>
               ))}
-              {!journeyWeekSubmitted && (
-                <div className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
-                  <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{Math.min(overdueTasks.length, 2) + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-text">Write your weekly Journey entry</p>
-                    <p className="text-xs text-text-dim">Founder Journey · Pending</p>
-                  </div>
-                </div>
-              )}
+              <button
+                onClick={addDraftItem}
+                className="flex items-center gap-1.5 text-xs text-text-muted hover:text-amber transition-colors px-2 py-1.5 mt-0.5"
+              >
+                <Plus size={13} />
+                Add item
+              </button>
             </div>
           )}
         </div>
