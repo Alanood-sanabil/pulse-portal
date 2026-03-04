@@ -134,9 +134,15 @@ export default function Home() {
                   <p className="text-text font-medium text-sm leading-tight">{venture.va.name}</p>
                 </div>
               </div>
-              <div className="mt-1 pt-2 border-t border-border-subtle">
-                <span className="text-text-dim text-xs">Access URL</span>
-                <p className="text-text-muted text-sm italic">Not yet live</p>
+              <div className="mt-1 pt-2 border-t border-border-subtle flex items-center justify-between">
+                <div>
+                  <span className="text-text-dim text-xs">Access URL</span>
+                  <p className="text-text-muted text-sm italic">Not yet live</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-text-dim text-xs">Journey Day</span>
+                  <p className="text-sm font-bold font-mono text-amber">Day 62</p>
+                </div>
               </div>
             </div>
           </div>
@@ -161,6 +167,35 @@ export default function Home() {
             </button>
           </div>
         )}
+
+        {/* ── What to Focus on Today (always visible) ── */}
+        <div className="card">
+          <h3 className="text-sm font-semibold text-text mb-3">What to Focus on Today</h3>
+          {overdueTasks.length === 0 && upcomingMilestones.length === 0 && journeyWeekSubmitted ? (
+            <p className="text-sm text-text-muted py-2">All caught up — no urgent actions today.</p>
+          ) : (
+            <div className="space-y-2">
+              {overdueTasks.slice(0, 2).map((task, i) => (
+                <div key={task.id} className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
+                  <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-text truncate">{task.title}</p>
+                    <p className="text-xs text-text-dim">{task.category} · Due {task.dueDate}</p>
+                  </div>
+                </div>
+              ))}
+              {!journeyWeekSubmitted && (
+                <div className="flex items-center gap-3 px-3 py-2.5 bg-bg-elevated rounded-lg">
+                  <span className="w-5 h-5 rounded-full bg-amber/15 text-amber text-xs font-bold flex items-center justify-center shrink-0">{Math.min(overdueTasks.length, 2) + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-text">Write your weekly Journey entry</p>
+                    <p className="text-xs text-text-dim">Founder Journey · Pending</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* ── Two-column layout ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">

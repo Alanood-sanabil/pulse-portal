@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Plus, CheckCircle2, AlertTriangle, Clock, XCircle, CalendarDays, FileText, History, ChevronDown } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Plus, CheckCircle2, AlertTriangle, Clock, XCircle, CalendarDays, FileText, History, ChevronDown, Download, Filter } from 'lucide-react'
 import Layout from '../components/Layout'
 import Modal from '../components/Modal'
 import SidePanel from '../components/SidePanel'
@@ -83,6 +83,7 @@ export default function Milestones() {
 
   // Celebration animation state
   const [celebratingId, setCelebratingId] = useState(null)
+  const [statusFilter, setStatusFilter] = useState('all')
 
   function openPanel(milestone) {
     setSelectedMilestone(milestone)
@@ -179,6 +180,25 @@ export default function Milestones() {
     ? milestones.find(m => m.id === selectedMilestone.id) || selectedMilestone
     : null
 
+  const filteredMilestones = useMemo(() => {
+    if (statusFilter === 'all') return milestones
+    if (statusFilter === 'on-track') return milestones.filter(m => m.status === 'upcoming')
+    return milestones.filter(m => m.status === statusFilter)
+  }, [milestones, statusFilter])
+
+  function exportMilestonesCSV() {
+    const header = ['Name', 'Status', 'Planned Date', 'Actual Date', 'Phase', 'Description']
+    const lines = [header.join(','), ...milestones.map(m => [
+      `"${m.name}"`, m.status, m.plannedDate || '', m.actualDate || '', m.phase || '', `"${m.description || ''}"`
+    ].join(','))]
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url; a.download = 'milestones.csv'; a.click()
+    URL.revokeObjectURL(url)
+    addToast('CSV exported', 'success')
+  }
+
   return (
     <Layout title="Venture Growth" subtitle="Track milestones and celebrate progress">
       <div className="p-6 max-w-3xl mx-auto">
@@ -203,18 +223,35 @@ export default function Milestones() {
           </div>
         </div>
 
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <p className="text-text-muted text-sm">{milestones.filter(m => m.status === 'achieved').length} of {milestones.length} achieved</p>
+        {/* Header row with filter + export */}
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'achieved', label: 'Achieved' },
+              { key: 'on-track', label: 'On Track' },
+              { key: 'at-risk', label: 'At Risk' },
+              { key: 'upcoming', label: 'Upcoming' },
+            ].map(f => (
+              <button
+                key={f.key}
+                onClick={() => setStatusFilter(f.key)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors border ${
+                  statusFilter === f.key ? 'bg-amber/10 text-amber border-amber/20' : 'bg-bg-elevated text-text-muted border-border hover:text-text'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="btn-primary flex items-center gap-2 text-sm"
-          >
-            <Plus size={15} />
-            Add Custom Milestone
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={exportMilestonesCSV} className="btn-ghost flex items-center gap-1.5 text-sm">
+              <Download size={14} /> Export CSV
+            </button>
+            <button onClick={() => setAddModalOpen(true)} className="btn-primary flex items-center gap-2 text-sm">
+              <Plus size={15} /> Add Milestone
+            </button>
+          </div>
         </div>
 
         {/* Timeline */}
@@ -223,7 +260,7 @@ export default function Milestones() {
           <div className="absolute left-[7px] top-4 bottom-4 w-px bg-border" />
 
           <div className="space-y-0">
-            {milestones.map((milestone, idx) => {
+            {filteredMilestones.map((milestone, idx) => {
               const config = STATUS_CONFIG[milestone.status] || STATUS_CONFIG.upcoming
               return (
                 <div key={milestone.id} className="flex gap-4 group">
