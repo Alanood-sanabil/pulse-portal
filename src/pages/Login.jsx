@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Zap } from 'lucide-react'
+import portalLogo from '../images/portal-logo.png'
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('mustafa@tradepay.sa')
@@ -28,12 +28,21 @@ export default function Login({ onLogin }) {
     >
       {/* Logo + Titles */}
       <div className="flex flex-col items-center mb-8 select-none">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg"
-          style={{ background: '#2563EB' }}
-        >
-          <Zap size={26} className="text-white" fill="white" />
-        </div>
+        <img
+          src={portalLogo}
+          alt="Portal Logo"
+          width={72}
+          height={72}
+          style={{ borderRadius: 16, marginBottom: 20 }}
+          onError={e => {
+            console.error('portal-logo.png failed to load')
+            e.currentTarget.style.display = 'none'
+            const fallback = document.createElement('div')
+            fallback.style.cssText = 'width:72px;height:72px;border-radius:16px;background:#2563EB;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:28px;font-weight:700;color:#fff'
+            fallback.textContent = 'P'
+            e.currentTarget.parentNode.insertBefore(fallback, e.currentTarget)
+          }}
+        />
         <h1 className="text-[26px] font-bold text-white tracking-tight leading-none mb-1.5">
           Founder Portal
         </h1>

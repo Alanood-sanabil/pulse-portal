@@ -3,9 +3,10 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import {
   Home, BookOpen, Wrench, Map, Layers, HelpCircle, Users,
-  BarChart2, Flag, FolderOpen, Bell, Layout, Zap, Lock, PenLine,
+  BarChart2, Flag, FolderOpen, Bell, Layout, Lock, PenLine,
   LifeBuoy, ExternalLink,
 } from 'lucide-react'
+import portalLogo from '../images/portal-logo.png'
 import SidePanel from './SidePanel'
 
 const navSections = [
@@ -53,6 +54,31 @@ const HELP_ARTICLES = [
   { title: 'Uploading & Versioning Documents', topic: 'Docs' },
 ]
 
+function LogoImage() {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+        P
+      </div>
+    )
+  }
+  return (
+    <img
+      src={portalLogo}
+      alt="Pulse Logo"
+      width={32}
+      height={32}
+      style={{ borderRadius: 8 }}
+      className="shrink-0"
+      onError={() => {
+        console.error('portal-logo.png failed to load')
+        setFailed(true)
+      }}
+    />
+  )
+}
+
 export default function Sidebar() {
   const { notificationCount } = useApp()
   const navigate = useNavigate()
@@ -64,9 +90,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="px-5 py-5 border-b border-border">
           <button onClick={() => navigate('/')} className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-amber flex items-center justify-center">
-              <Zap size={15} className="text-bg-base" fill="currentColor" />
-            </div>
+            <LogoImage />
             <div>
               <div className="text-sm font-bold text-text leading-tight">Pulse</div>
               <div className="text-[10px] text-text-dim leading-tight">Sanabil Studio</div>

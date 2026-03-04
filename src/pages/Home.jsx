@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import tradepayLogo from '../images/Tradepay-logo.png'
 import { useNavigate, Link } from 'react-router-dom'
 import {
   HelpCircle,
@@ -32,6 +33,31 @@ const CATEGORY_TAG = {
   Finance: 'tag-finance',
   Operations: 'tag-operations',
   Talent: 'tag-talent',
+}
+
+function VentureLogo({ initials }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="w-16 h-16 rounded-xl bg-amber/20 border border-amber/30 flex items-center justify-center shrink-0">
+        <span className="text-amber font-bold text-lg">{initials}</span>
+      </div>
+    )
+  }
+  return (
+    <img
+      src={tradepayLogo}
+      alt="Tradepay Logo"
+      width={64}
+      height={64}
+      style={{ borderRadius: 12, objectFit: 'cover' }}
+      className="shrink-0"
+      onError={() => {
+        console.error('Tradepay-logo.png failed to load')
+        setFailed(true)
+      }}
+    />
+  )
 }
 
 function StatusIcon({ status, size = 16 }) {
@@ -104,9 +130,7 @@ export default function Home() {
         <div className="card">
           <div className="flex flex-col lg:flex-row gap-5">
             <div className="flex items-start gap-4 flex-1">
-              <div className="w-12 h-12 rounded-xl bg-amber/20 border border-amber/30 flex items-center justify-center shrink-0">
-                <span className="text-amber font-bold text-lg">{venture.initials}</span>
-              </div>
+              <VentureLogo initials={venture.initials} />
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h2 className="text-lg font-bold text-text">{venture.name}</h2>
