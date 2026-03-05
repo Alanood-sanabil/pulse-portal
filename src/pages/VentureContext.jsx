@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, createContext, useContext } from 'react'
 import {
   Search, ExternalLink, FileText, TrendingUp, Users, DollarSign, BarChart2,
   Calendar, Tag, Eye, X, Check, Layers, Globe, GitBranch, Building2,
-  Handshake, FlaskConical, Microscope, Upload, Link,
+  Handshake, FlaskConical, Microscope, Upload, Link, RefreshCw, CloudOff,
+  Settings,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import SidePanel from '../components/SidePanel'
@@ -733,8 +734,321 @@ const PRE_SPINOUT_TEAM = [
 ]
 
 // ─────────────────────────────────────────────
+// Integration architecture
+// ─────────────────────────────────────────────
+
+const ConnectionsContext = createContext({ source: null, connected: true })
+
+const SECTION_SOURCE = {
+  'market-overview':   'google-drive',
+  'product-decisions': 'asana',
+  'design-flows':      'asana',
+  'user-research':     'google-drive',
+  'partnerships':      'google-drive',
+  'prototype-testing': 'asana',
+  'market-research':   'google-drive',
+  'tech-stack':        'both',
+  'financial-history': 'google-drive',
+  'team-history':      'both',
+  'key-decisions':     'asana',
+}
+
+const INTEGRATION_INFO = {
+  googleDrive: {
+    name: 'Google Drive',
+    folderName: 'Tradepay Venture Folder',
+    sections: ['Market Overview', 'User Research', 'Partnerships', 'Market Research', 'Financial History'],
+    partialSections: ['Tech Stack', 'Team History'],
+    iconBg: 'bg-[#4285F4]/10',
+    lastSynced: 'Mar 5, 2026 at 9:14 AM',
+  },
+  asana: {
+    name: 'Asana',
+    projectName: 'Tradepay Onboarding',
+    sections: ['Product Decisions', 'Design & Flows', 'Prototype & Testing'],
+    partialSections: ['Tech Stack', 'Team History'],
+    iconBg: 'bg-[#F06A6A]/10',
+    lastSynced: 'Mar 5, 2026 at 9:14 AM',
+  },
+}
+
+// ─────────────────────────────────────────────
 // Shared UI components
 // ─────────────────────────────────────────────
+
+// ─────────────────────────────────────────────
+// Integration icons
+// ─────────────────────────────────────────────
+
+function GDriveIcon({ size = 12 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 38l6-10h24l6 10H6z" fill="#34A853"/>
+      <path d="M30 14H18L6 34h12z" fill="#4285F4"/>
+      <path d="M36 34H24L30 14l12 20z" fill="#FBBC04"/>
+    </svg>
+  )
+}
+
+function AsanaIcon({ size = 12 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="10" r="6.5" fill="#F06A6A"/>
+      <circle cx="7" cy="22" r="6.5" fill="#F06A6A" opacity="0.85"/>
+      <circle cx="25" cy="22" r="6.5" fill="#F06A6A" opacity="0.85"/>
+    </svg>
+  )
+}
+
+// ─────────────────────────────────────────────
+// Integration UI components
+// ─────────────────────────────────────────────
+
+function DataSourceBadge() {
+  const { source, connected } = useContext(ConnectionsContext)
+  if (!source) return null
+  const sources = source === 'both' ? ['google-drive', 'asana'] : [source]
+  return (
+    <div className="flex items-center gap-1 flex-wrap">
+      {sources.map(src => (
+        <div key={src} className="flex items-center gap-1 bg-bg-elevated border border-border/70 rounded-full px-1.5 py-0.5">
+          {connected && <div className="w-1.5 h-1.5 rounded-full bg-pulse-green shrink-0" />}
+          {src === 'google-drive' ? <GDriveIcon size={9} /> : <AsanaIcon size={9} />}
+          <span className="text-[9px] font-medium text-text-dim">
+            {src === 'google-drive' ? 'Drive' : 'Asana'}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SyncedLabel() {
+  const { source } = useContext(ConnectionsContext)
+  if (!source) return null
+  const text = source === 'google-drive' ? 'Synced from Google Drive'
+    : source === 'asana' ? 'Synced from Asana'
+    : 'Synced from Google Drive & Asana'
+  return (
+    <p className="text-[10px] text-text-dim mt-2.5 pt-2.5 border-t border-border/50">{text}</p>
+  )
+}
+
+function SkeletonBar({ className = '' }) {
+  return <div className={`bg-bg-elevated rounded animate-pulse ${className}`} />
+}
+
+function SectionSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[0, 1, 2, 3].map(i => (
+        <div key={i} className="bg-bg-surface border border-border rounded-xl p-5 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-2 flex-1">
+              <SkeletonBar className="h-3.5 w-48" />
+              <SkeletonBar className="h-2.5 w-32" />
+            </div>
+            <SkeletonBar className="h-5 w-16 rounded-full" />
+          </div>
+          <SkeletonBar className="h-3 w-full" />
+          <SkeletonBar className="h-3 w-5/6" />
+          <SkeletonBar className="h-3 w-4/5" />
+          <SkeletonBar className="h-2.5 w-1/3 mt-1" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function DisconnectedState({ source }) {
+  const isGDrive = source === 'google-drive' || source === 'both'
+  const connectText = isGDrive ? 'Connect Google Drive' : 'Connect Asana'
+  const sourceText = source === 'both'
+    ? 'venture folder in Google Drive and your Asana project'
+    : source === 'google-drive'
+      ? 'venture folder in Google Drive'
+      : 'Asana project'
+  return (
+    <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-border rounded-xl text-center px-8">
+      <div className="w-12 h-12 rounded-full bg-bg-elevated flex items-center justify-center">
+        <CloudOff size={20} className="text-text-dim" />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-text mb-1.5">Not connected</p>
+        <p className="text-sm text-text-muted leading-relaxed max-w-xs mx-auto">
+          This section pulls from your {sourceText}. Ask your Portfolio Manager to connect it.
+        </p>
+      </div>
+      <button className="btn-secondary text-sm px-4">{connectText}</button>
+    </div>
+  )
+}
+
+function ConnectionCard({ name, icon, iconBg, connected, detail, lastSynced, onSync, onConnect }) {
+  return (
+    <div className={`rounded-lg p-3 border ${connected ? 'bg-pulse-green/[0.03] border-pulse-green/25' : 'bg-bg-elevated border-border'}`}>
+      <div className="flex items-center gap-2.5 mb-2">
+        <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}>
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            {connected && <div className="w-1.5 h-1.5 rounded-full bg-pulse-green shrink-0" />}
+            <p className="text-xs font-semibold text-text">{name}</p>
+          </div>
+          <p className="text-[10px] text-text-dim truncate mt-0.5">{connected ? detail : 'Not connected'}</p>
+        </div>
+      </div>
+      {connected ? (
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] text-text-dim">Synced {lastSynced}</p>
+          <button onClick={onSync} className="flex items-center gap-1 text-[10px] font-medium text-amber hover:text-amber/70 transition-colors">
+            <RefreshCw size={9} />
+            Sync Now
+          </button>
+        </div>
+      ) : (
+        <button onClick={onConnect} className="w-full text-[10px] font-medium text-pulse-blue border border-pulse-blue/20 rounded-md py-1 hover:bg-pulse-blue/5 transition-colors mt-1">
+          Connect
+        </button>
+      )}
+    </div>
+  )
+}
+
+function ConnectionsBanner({ connections, onSync, onManage }) {
+  return (
+    <div className="bg-bg-surface border border-border rounded-xl p-4 mb-6">
+      <p className="text-[10px] font-semibold text-text-dim uppercase tracking-widest mb-3">Data Connections</p>
+      <div className="grid grid-cols-2 gap-2">
+        <ConnectionCard
+          name="Google Drive"
+          icon={<GDriveIcon size={14} />}
+          iconBg={INTEGRATION_INFO.googleDrive.iconBg}
+          connected={connections.googleDrive.connected}
+          detail={INTEGRATION_INFO.googleDrive.folderName}
+          lastSynced={connections.googleDrive.lastSynced}
+          onSync={() => onSync('googleDrive')}
+          onConnect={() => {}}
+        />
+        <ConnectionCard
+          name="Asana"
+          icon={<AsanaIcon size={14} />}
+          iconBg={INTEGRATION_INFO.asana.iconBg}
+          connected={connections.asana.connected}
+          detail={INTEGRATION_INFO.asana.projectName}
+          lastSynced={connections.asana.lastSynced}
+          onSync={() => onSync('asana')}
+          onConnect={() => {}}
+        />
+      </div>
+      <div className="flex justify-end mt-3 pt-2.5 border-t border-border">
+        <button onClick={onManage} className="text-[10px] font-medium text-text-muted hover:text-pulse-blue transition-colors flex items-center gap-1">
+          <Settings size={10} />
+          Manage Connections
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function ManageConnectionsPanel({ isOpen, onClose, connections, onDisconnect, onConnect }) {
+  return (
+    <SidePanel isOpen={isOpen} onClose={onClose} title="Manage Connections" width="w-[460px]">
+      <div className="p-6 space-y-5">
+        <p className="text-sm text-text-muted leading-relaxed">
+          Manage the integrations that power Venture Context. Connected sources sync automatically every 24 hours. Ask your Portfolio Manager to authorise new connections.
+        </p>
+
+        {/* Google Drive */}
+        <div className="bg-bg-surface border border-border rounded-xl p-5">
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-lg ${INTEGRATION_INFO.googleDrive.iconBg} flex items-center justify-center shrink-0`}>
+                <GDriveIcon size={18} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-text">Google Drive</p>
+                {connections.googleDrive.connected ? (
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-pulse-green" />
+                    <p className="text-xs text-pulse-green">{INTEGRATION_INFO.googleDrive.folderName}</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-text-dim mt-0.5">Not connected</p>
+                )}
+              </div>
+            </div>
+            {connections.googleDrive.connected ? (
+              <button className="text-xs text-pulse-red hover:underline shrink-0" onClick={() => onDisconnect('googleDrive')}>
+                Disconnect
+              </button>
+            ) : (
+              <button className="btn-secondary text-xs shrink-0" onClick={() => onConnect('googleDrive')}>
+                Connect
+              </button>
+            )}
+          </div>
+          <p className="text-[10px] font-semibold text-text-dim uppercase tracking-widest mb-2">Powers sections</p>
+          <div className="flex flex-wrap gap-1 mb-3">
+            {INTEGRATION_INFO.googleDrive.sections.map(s => (
+              <span key={s} className="text-[10px] bg-bg-elevated px-2 py-0.5 rounded-full text-text-muted">{s}</span>
+            ))}
+            {INTEGRATION_INFO.googleDrive.partialSections.map(s => (
+              <span key={s} className="text-[10px] bg-bg-elevated px-2 py-0.5 rounded-full text-text-dim">{s} (partial)</span>
+            ))}
+          </div>
+          {connections.googleDrive.connected && (
+            <p className="text-[10px] text-text-dim">Last synced: {connections.googleDrive.lastSynced}</p>
+          )}
+        </div>
+
+        {/* Asana */}
+        <div className="bg-bg-surface border border-border rounded-xl p-5">
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-lg ${INTEGRATION_INFO.asana.iconBg} flex items-center justify-center shrink-0`}>
+                <AsanaIcon size={18} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-text">Asana</p>
+                {connections.asana.connected ? (
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-pulse-green" />
+                    <p className="text-xs text-pulse-green">{INTEGRATION_INFO.asana.projectName}</p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-text-dim mt-0.5">Not connected</p>
+                )}
+              </div>
+            </div>
+            {connections.asana.connected ? (
+              <button className="text-xs text-pulse-red hover:underline shrink-0" onClick={() => onDisconnect('asana')}>
+                Disconnect
+              </button>
+            ) : (
+              <button className="btn-secondary text-xs shrink-0" onClick={() => onConnect('asana')}>
+                Connect
+              </button>
+            )}
+          </div>
+          <p className="text-[10px] font-semibold text-text-dim uppercase tracking-widest mb-2">Powers sections</p>
+          <div className="flex flex-wrap gap-1 mb-3">
+            {INTEGRATION_INFO.asana.sections.map(s => (
+              <span key={s} className="text-[10px] bg-bg-elevated px-2 py-0.5 rounded-full text-text-muted">{s}</span>
+            ))}
+            {INTEGRATION_INFO.asana.partialSections.map(s => (
+              <span key={s} className="text-[10px] bg-bg-elevated px-2 py-0.5 rounded-full text-text-dim">{s} (partial)</span>
+            ))}
+          </div>
+          {connections.asana.connected && (
+            <p className="text-[10px] text-text-dim">Last synced: {connections.asana.lastSynced}</p>
+          )}
+        </div>
+      </div>
+    </SidePanel>
+  )
+}
 
 function TagBadge({ tag }) {
   const colorClass = TAG_COLORS[tag] || 'bg-bg-elevated text-text-muted'
@@ -757,10 +1071,14 @@ function StatusBadge({ status }) {
 
 function StatCard({ label, value, sub, color = 'text-amber' }) {
   return (
-    <div className="bg-bg-surface border border-border rounded-xl p-4">
-      <p className="text-xs text-text-dim mb-1">{label}</p>
+    <div className="bg-bg-surface border border-border rounded-xl p-4 relative">
+      <div className="absolute top-3 right-3">
+        <DataSourceBadge />
+      </div>
+      <p className="text-xs text-text-dim mb-1 pr-16">{label}</p>
       <p className={`text-xl font-bold font-mono ${color}`}>{value}</p>
       {sub && <p className="text-xs text-text-muted mt-1">{sub}</p>}
+      <SyncedLabel />
     </div>
   )
 }
@@ -782,7 +1100,10 @@ function StructuredDecisionCard({ decision }) {
           <h3 className="text-sm font-semibold text-text">{decision.title}</h3>
           <p className="text-xs text-text-dim mt-1">{decision.date} · {decision.decider}</p>
         </div>
-        <StatusBadge status={decision.status} />
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <DataSourceBadge />
+          <StatusBadge status={decision.status} />
+        </div>
       </div>
       <div className="mx-5 mb-4 p-3 bg-amber/5 border border-amber/20 rounded-lg">
         <p className="text-[10px] font-semibold text-amber uppercase tracking-widest mb-1.5">Decision</p>
@@ -795,6 +1116,7 @@ function StructuredDecisionCard({ decision }) {
       <div className="px-5 pb-5">
         <p className="text-[10px] font-semibold text-text-dim uppercase tracking-widest mb-1.5">Outcome</p>
         <p className="text-sm text-text-muted leading-relaxed">{decision.outcome}</p>
+        <SyncedLabel />
       </div>
     </div>
   )
@@ -807,13 +1129,17 @@ function LegacyDecisionCard({ block, accentColor = 'border-amber' }) {
     <div className={`bg-bg-card border border-border border-l-4 ${accentColor} rounded-xl p-5 space-y-2`}>
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-sm font-semibold text-text">{block.title}</h3>
-        <TagBadge tag={block.tag} />
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <DataSourceBadge />
+          <TagBadge tag={block.tag} />
+        </div>
       </div>
       <div className="space-y-1.5 pt-1">
         {lines.map((line, i) => (
           <p key={i} className="text-sm text-text-muted leading-relaxed">{parseInline(line)}</p>
         ))}
       </div>
+      <SyncedLabel />
     </div>
   )
 }
@@ -844,7 +1170,10 @@ function MarketOverview() {
         <LegacyDecisionCard key={block.id} block={block} accentColor="border-amber" />
       ))}
       <div>
-        <h3 className="text-sm font-semibold text-text mb-3">Competitor Map</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-text">Competitor Map</h3>
+          <DataSourceBadge />
+        </div>
         <div className="bg-bg-surface border border-border rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
@@ -871,6 +1200,7 @@ function MarketOverview() {
             </tbody>
           </table>
         </div>
+        <SyncedLabel />
       </div>
       <div>
         <p className="text-xs text-text-dim uppercase tracking-widest font-semibold mb-3">Sources</p>
@@ -913,14 +1243,18 @@ function DesignFlows() {
                 <p className="text-sm font-semibold text-text">{flow.name}</p>
                 <p className="text-xs text-text-muted mt-0.5 mb-2 leading-relaxed">{flow.description}</p>
                 <p className="text-xs text-text-dim">Designed by {flow.designer} · {flow.date} · {flow.steps.length} steps</p>
+                <SyncedLabel />
               </div>
-              <button
-                onClick={() => setOpenFlow(flow)}
-                className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 shrink-0 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                <Eye size={12} />
-                View Flow
-              </button>
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <DataSourceBadge />
+                <button
+                  onClick={() => setOpenFlow(flow)}
+                  className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  <Eye size={12} />
+                  View Flow
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -942,9 +1276,13 @@ function DesignFlows() {
                 </button>
               </div>
               <div className="p-3">
-                <p className="text-xs font-semibold text-text">{wf.name}</p>
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <p className="text-xs font-semibold text-text">{wf.name}</p>
+                  <DataSourceBadge />
+                </div>
                 <p className="text-[10px] text-text-dim mt-0.5">{wf.designer} · {wf.date}</p>
                 <span className="inline-block mt-1.5 text-[10px] font-medium px-1.5 py-0.5 bg-bg-elevated rounded text-text-muted">{wf.version}</span>
+                <SyncedLabel />
               </div>
             </div>
           ))}
@@ -1002,9 +1340,11 @@ function UserResearch() {
         <SectionSubheading>Key Research Themes</SectionSubheading>
         <div className="grid grid-cols-3 gap-4">
           {RESEARCH_THEMES.map((theme, i) => (
-            <div key={i} className="bg-bg-surface border border-border rounded-xl p-5 text-center">
+            <div key={i} className="bg-bg-surface border border-border rounded-xl p-5 text-center relative">
+              <div className="absolute top-3 right-3"><DataSourceBadge /></div>
               <p className={`text-3xl font-bold font-mono ${theme.color} mb-2`}>{theme.stat}</p>
               <p className="text-xs text-text-muted leading-relaxed">{theme.label}</p>
+              <SyncedLabel />
             </div>
           ))}
         </div>
@@ -1021,13 +1361,16 @@ function UserResearch() {
                   <p className="text-sm font-semibold text-text">{interview.subject}</p>
                   <p className="text-xs text-text-dim mt-0.5">{interview.companySize} · {interview.date} · Conducted by {interview.conductor}</p>
                 </div>
-                <button
-                  onClick={() => setOpenInterview(interview)}
-                  className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 shrink-0 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  <FileText size={12} />
-                  Full Notes
-                </button>
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <DataSourceBadge />
+                  <button
+                    onClick={() => setOpenInterview(interview)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    <FileText size={12} />
+                    Full Notes
+                  </button>
+                </div>
               </div>
               <ul className="space-y-1.5">
                 {interview.insights.map((insight, i) => (
@@ -1037,6 +1380,7 @@ function UserResearch() {
                   </li>
                 ))}
               </ul>
+              <SyncedLabel />
             </div>
           ))}
         </div>
@@ -1053,7 +1397,10 @@ function UserResearch() {
                   <p className="text-sm font-semibold text-text">{survey.name}</p>
                   <p className="text-xs text-text-dim mt-0.5">{survey.respondents} respondents · {survey.date}</p>
                 </div>
-                <span className="text-[10px] font-medium px-2.5 py-1 bg-pulse-blue/10 text-pulse-blue rounded-full shrink-0">Survey</span>
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <DataSourceBadge />
+                  <span className="text-[10px] font-medium px-2.5 py-1 bg-pulse-blue/10 text-pulse-blue rounded-full">Survey</span>
+                </div>
               </div>
               <ul className="space-y-1.5">
                 {survey.findings.map((finding, i) => (
@@ -1063,6 +1410,7 @@ function UserResearch() {
                   </li>
                 ))}
               </ul>
+              <SyncedLabel />
             </div>
           ))}
         </div>
@@ -1124,9 +1472,12 @@ function Partnerships() {
                 <p className="text-xs text-text-dim mt-0.5">{p.contact}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <TagBadge tag={p.type} />
-              <StatusBadge status={p.status} />
+            <div className="flex flex-col items-end gap-1.5 shrink-0">
+              <DataSourceBadge />
+              <div className="flex items-center gap-2">
+                <TagBadge tag={p.type} />
+                <StatusBadge status={p.status} />
+              </div>
             </div>
           </div>
           <p className="text-sm text-text-muted leading-relaxed mb-3">{p.description}</p>
@@ -1140,6 +1491,7 @@ function Partnerships() {
               <p className="text-xs text-text-muted leading-relaxed">{p.nextSteps}</p>
             </div>
           </div>
+          <SyncedLabel />
         </div>
       ))}
     </div>
@@ -1173,6 +1525,7 @@ function PrototypeTesting() {
                       <p className="text-sm font-semibold text-text">{pv.date}</p>
                       <p className="text-xs text-text-dim mt-0.5">{pv.built}</p>
                     </div>
+                    <DataSourceBadge />
                   </div>
                   <p className="text-sm text-text-muted leading-relaxed mt-2">{pv.description}</p>
                   <div className="mt-3 space-y-2">
@@ -1185,6 +1538,7 @@ function PrototypeTesting() {
                       <p className="text-xs text-text-muted leading-relaxed">{pv.testingOutcome}</p>
                     </div>
                   </div>
+                  <SyncedLabel />
                 </div>
               </div>
             </div>
@@ -1208,6 +1562,7 @@ function PrototypeTesting() {
                   </div>
                   <p className="text-xs text-text-dim">{ts.participants} participants · Run by {ts.conductor}</p>
                 </div>
+                <DataSourceBadge />
               </div>
               <div className="space-y-3">
                 <div>
@@ -1226,6 +1581,7 @@ function PrototypeTesting() {
                   <p className="text-sm text-text-muted leading-relaxed">{ts.actions}</p>
                 </div>
               </div>
+              <SyncedLabel />
             </div>
           ))}
         </div>
@@ -1255,18 +1611,22 @@ function MarketResearch() {
                 <p className="text-sm font-semibold text-text">{item.title}</p>
                 <p className="text-xs text-text-dim mt-0.5">{item.date} · {item.conductor}</p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <TagBadge tag={item.type} />
-                <button
-                  onClick={() => setOpenReport(item)}
-                  className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  <Eye size={12} />
-                  View Report
-                </button>
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <DataSourceBadge />
+                <div className="flex items-center gap-2">
+                  <TagBadge tag={item.type} />
+                  <button
+                    onClick={() => setOpenReport(item)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-pulse-blue hover:text-pulse-blue/80 bg-pulse-blue/10 hover:bg-pulse-blue/15 px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    <Eye size={12} />
+                    View Report
+                  </button>
+                </div>
               </div>
             </div>
             <p className="text-sm text-text-muted leading-relaxed">{item.summary}</p>
+            <SyncedLabel />
           </div>
         ))}
       </div>
@@ -1336,12 +1696,15 @@ function TechStack() {
               <h3 className="text-sm font-semibold text-text">{openTech.name}</h3>
               <p className="text-xs text-text-dim mt-0.5">{openTech.detail}</p>
             </div>
-            <button
-              onClick={() => setOpenTech(null)}
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-text-dim hover:text-text hover:bg-bg-elevated transition-colors"
-            >
-              <X size={14} />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <DataSourceBadge />
+              <button
+                onClick={() => setOpenTech(null)}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-text-dim hover:text-text hover:bg-bg-elevated transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
           </div>
           <div className="space-y-4">
             <div>
@@ -1365,6 +1728,7 @@ function TechStack() {
               </a>
             </div>
           </div>
+          <SyncedLabel />
         </div>
       )}
     </div>
@@ -1432,7 +1796,10 @@ function FinancialHistory() {
       </div>
 
       <div className="bg-bg-surface border border-border rounded-xl p-5">
-        <p className="text-sm font-semibold text-text mb-4">Monthly Burn Rate (SAR '000)</p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-semibold text-text">Monthly Burn Rate (SAR '000)</p>
+          <DataSourceBadge />
+        </div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={BURN_DATA} barSize={28}>
             <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
@@ -1444,6 +1811,7 @@ function FinancialHistory() {
             <Bar dataKey="burn" fill="#2563EB" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+        <SyncedLabel />
       </div>
 
       <div>
@@ -1499,15 +1867,19 @@ function TeamHistory() {
                         <p className="text-sm font-semibold text-text">{m.name}</p>
                         <p className="text-xs text-text-muted">{m.role} · {m.period}</p>
                       </div>
-                      <a
-                        href={`mailto:${m.contact}`}
-                        className="flex items-center gap-1.5 text-xs text-pulse-blue hover:underline shrink-0"
-                      >
-                        <Link size={11} />
-                        {m.contact}
-                      </a>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0">
+                        <DataSourceBadge />
+                        <a
+                          href={`mailto:${m.contact}`}
+                          className="flex items-center gap-1.5 text-xs text-pulse-blue hover:underline"
+                        >
+                          <Link size={11} />
+                          {m.contact}
+                        </a>
+                      </div>
                     </div>
                     <p className="text-xs text-text-dim leading-relaxed mt-2">{m.contribution}</p>
+                    <SyncedLabel />
                   </div>
                 </div>
               ))}
@@ -1542,9 +1914,45 @@ const SECTION_RENDERERS = {
 
 export default function VentureContext() {
   const [activeSection, setActiveSection] = useState('market-overview')
+  const [loadingSection, setLoadingSection] = useState(false)
+  const [manageOpen, setManageOpen] = useState(false)
+  const [connections, setConnections] = useState({
+    googleDrive: { connected: true, lastSynced: INTEGRATION_INFO.googleDrive.lastSynced },
+    asana:       { connected: true, lastSynced: INTEGRATION_INFO.asana.lastSynced },
+  })
+
+  // Simulate a fetch when switching sections
+  useEffect(() => {
+    setLoadingSection(true)
+    const t = setTimeout(() => setLoadingSection(false), 900)
+    return () => clearTimeout(t)
+  }, [activeSection])
+
+  function handleSync(key) {
+    const now = new Date()
+    const label = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+    setConnections(prev => ({ ...prev, [key]: { ...prev[key], lastSynced: label } }))
+  }
+
+  function handleDisconnect(key) {
+    setConnections(prev => ({ ...prev, [key]: { ...prev[key], connected: false } }))
+  }
+
+  function handleConnect(key) {
+    setConnections(prev => ({ ...prev, [key]: { ...prev[key], connected: true } }))
+  }
 
   const SectionContent = SECTION_RENDERERS[activeSection]
   const activeDef = SECTIONS.find(s => s.id === activeSection)
+  const currentSource = SECTION_SOURCE[activeSection]
+
+  const sourceConnected = currentSource === 'both'
+    ? (connections.googleDrive.connected || connections.asana.connected)
+    : currentSource === 'google-drive'
+      ? connections.googleDrive.connected
+      : connections.asana.connected
+
+  const ctxValue = { source: currentSource, connected: sourceConnected }
 
   return (
     <Layout title="Venture Context" subtitle="Tradepay · Full institutional memory from prototype phase">
@@ -1580,20 +1988,46 @@ export default function VentureContext() {
         </aside>
 
         {/* Right content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-8 max-w-4xl">
-            <div className="flex items-center gap-2 mb-6">
-              {activeDef && <activeDef.icon size={18} className="text-amber shrink-0" />}
-              <h2 className="text-lg font-semibold text-text">{activeDef?.label}</h2>
-            </div>
-            {SectionContent ? <SectionContent /> : (
-              <div className="flex items-center justify-center py-24">
-                <p className="text-text-muted text-sm">Content not yet available.</p>
+        <ConnectionsContext.Provider value={ctxValue}>
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-8 max-w-4xl">
+              {/* Connections banner */}
+              <ConnectionsBanner
+                connections={connections}
+                onSync={handleSync}
+                onManage={() => setManageOpen(true)}
+              />
+
+              {/* Section heading */}
+              <div className="flex items-center gap-2 mb-6">
+                {activeDef && <activeDef.icon size={18} className="text-amber shrink-0" />}
+                <h2 className="text-lg font-semibold text-text">{activeDef?.label}</h2>
               </div>
-            )}
+
+              {/* Section content: loading → disconnected → connected */}
+              {loadingSection ? (
+                <SectionSkeleton />
+              ) : !sourceConnected ? (
+                <DisconnectedState source={currentSource} />
+              ) : SectionContent ? (
+                <SectionContent />
+              ) : (
+                <div className="flex items-center justify-center py-24">
+                  <p className="text-text-muted text-sm">Content not yet available.</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </ConnectionsContext.Provider>
       </div>
+
+      <ManageConnectionsPanel
+        isOpen={manageOpen}
+        onClose={() => setManageOpen(false)}
+        connections={connections}
+        onDisconnect={handleDisconnect}
+        onConnect={handleConnect}
+      />
     </Layout>
   )
 }
